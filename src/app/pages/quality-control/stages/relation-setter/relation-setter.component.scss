@@ -1,0 +1,45 @@
+.finder {
+  background-color: rgb(0, 0, 0);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.finder p {
+  color: rgba(255, 255, 255, 0.695);
+}
+
+.form-label-light {
+  font-size: 12px;
+  color: #000000;
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+
+.finder h6 {
+  color: rgb(255, 255, 255);
+}
+
+.custom-table {
+  border-color: rgb(220, 220, 220);
+}
+
+.item-table-th {
+  background-color: rgba(50, 69, 190, 0.077);
+  color: rgb(0, 0, 0);
+  font-weight: 500;
+}
+
+.row-class-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.row-class-add img {
+  width: 300px;
+}
+
+.grey-txt {
+  color: rgb(144, 144, 144);
+}

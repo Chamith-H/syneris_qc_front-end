@@ -1,0 +1,190 @@
+<app-popup-title
+  [title]="'Quality Checking'"
+  (close)="closePopup.emit()"
+></app-popup-title>
+
+<div class="pb-3">
+  <div class="data-aligner p-3">
+    <div class="row gy-3">
+      <div class="col-6">
+        <p class="mb-0">Inspection Request No</p>
+        <h6 class="mb-0">{{ data.reqNo }}</h6>
+      </div>
+
+      <div class="col-6">
+        <p class="mb-0">Base Document</p>
+        <h6 class="mb-0">{{ data.DocNum }}</h6>
+      </div>
+
+      <div class="col-6">
+        <p class="mb-0">Item Code</p>
+        <h6 class="mb-0">{{ data.ItemCode }}</h6>
+      </div>
+
+      <div class="col-6">
+        <p class="mb-0">Line Number</p>
+        <h6 class="mb-0">{{ data.Line }}</h6>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-3">
+    <div *ngIf="data.U_Approval === 'Open'">
+      <div class="starting-opt">
+        <div class="row">
+          <div class="col-6">
+            <img
+              class="create-back"
+              src="../../../../../assets/images/whites/qc.png"
+              alt=""
+            />
+          </div>
+          <div class="col-6">
+            <div class="create-option-back pt-5">
+              <div>
+                <h6 class="mb-0 text-primary">
+                  Start Quality-Control Inspection Process
+                </h6>
+                <p class="mb-0 grey-txt">
+                  Initiates the formal quality control (QC) inspection procedure
+                  to verify that products, components, or processes meet defined
+                  specifications and quality standards. This process involves
+                  selecting the appropriate inspection type (incoming,
+                  in-process, or final), preparing necessary tools and
+                  documentation, recording inspection results, and determining
+                  the product’s compliance status. The outcome ensures only
+                  quality-compliant items proceed to the next phase, while
+                  non-conformities trigger corrective actions and documentation
+                  for traceability.
+                </p>
+              </div>
+
+              <div class="startingBox">
+                <form [formGroup]="form2" (ngSubmit)="startInspection()">
+                  <div class="row mt-4">
+                    <div class="col-6">
+                      <app-searchable-dropdown
+                        [control]="form2.controls.method"
+                        dropdownId="method"
+                        label="Quality checking method"
+                        emptyError="Checking method be empty"
+                        [options]="sampleMethods"
+                        [isSubmit]="isSubmit_form2"
+                        [mandatory]="true"
+                        [isDisabled]="loadingOpend"
+                        [isLoading]="loadingOpend"
+                        (onChange)="changeMethod()"
+                      >
+                      </app-searchable-dropdown>
+                    </div>
+
+                    <div class="col-6">
+                      <app-input-field
+                        [control]="form2.controls.sampleCount"
+                        inputId="sampleCount"
+                        label="Sample count"
+                        placeHolder="sample count"
+                        emptyError="Sample count cannot be empty!"
+                        [isSubmit]="isSubmit_form2"
+                        [mandatory]="true"
+                        type="number"
+                        [readonly]="
+                          form2.value.method === 'Single-Test' || loadingOpend
+                        "
+                      >
+                      </app-input-field>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary mt-n2">
+                      <span *ngIf="!isStarting">Start Inspection</span>
+                      <span *ngIf="isStarting"
+                        >Checking QC-Parameters&nbsp;
+                        <i
+                          class="bx bx-loader bx-spin align-middle ms-1 fs-4 text-white"
+                        ></i
+                      ></span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="data.U_Approval === 'Pending'">
+      <!-- Parameter table -->
+      <form [formGroup]="form3" (ngSubmit)="submit_form3()">
+        <table class="table table-sm table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Parameter</th>
+              <th>UOM</th>
+              <th>Type</th>
+              <th>Category</th>
+              <th>Condition</th>
+              <th *ngFor="let col of sampleCols">{{ col }}</th>
+            </tr>
+          </thead>
+          <tbody formArrayName="DocumentLines">
+            <tr
+              *ngFor="let row of itemList.controls; let rowIndex = index"
+              [formGroupName]="rowIndex"
+            >
+              <td>{{ row.value.parameterName }}</td>
+              <td>{{ row.value.uom }}</td>
+              <td>{{ row.value.type }}</td>
+              <td>{{ row.value.category }}</td>
+              <td>
+                {{
+                  valueFetcher(
+                    row.value.category,
+                    row.value.type,
+                    row.value.minValue,
+                    row.value.maxValue,
+                    row.value.stdValue
+                  )
+                }}
+              </td>
+
+              <!-- Sample inputs -->
+              <ng-container
+                formArrayName="samplingData"
+                *ngIf="getSamplingData(row) as sampleArray"
+              >
+                <td
+                  *ngFor="let col of sampleCols; let sampleIndex = index"
+                  [formGroupName]="sampleIndex"
+                >
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="observedValue"
+                  />
+                </td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="text-end">
+          <button class="btn btn-primary" type="submit" [disabled]="isSaving">
+            {{ isSaving ? "Saving..." : "Save" }}
+          </button>
+        </div>
+      </form>
+
+      <div *ngIf="itemList.controls.length !== 0" class="mt-3 pt-3 sep-border">
+        <div class="d-flex justify-content-between">
+          <div class="d-flex">
+            <button class="btn btn-danger">Move to Rejection</button>
+            <button class="btn btn-secondary ms-1">Move to Cancellation</button>
+          </div>
+          <button class="btn btn-success">Approve Inspection</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

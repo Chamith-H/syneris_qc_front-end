@@ -1,0 +1,162 @@
+<app-popup-title
+  [title]="'QC INSPECTION DETAILS'"
+  (close)="closePopup.emit()"
+></app-popup-title>
+
+<div class="pb-3">
+  <div class="data-aligner p-3">
+    <div class="row gy-3">
+      <div class="col-6">
+        <p class="mb-0">Inspection Request No</p>
+        <h6 class="mb-0">{{ data.reqNo }}</h6>
+      </div>
+
+      <div class="col-6">
+        <p class="mb-0">Base Document</p>
+        <h6 class="mb-0">{{ data.DocNum }}</h6>
+      </div>
+
+      <div class="col-6">
+        <p class="mb-0">Item Code</p>
+        <h6 class="mb-0">{{ data.ItemCode }}</h6>
+      </div>
+
+      <div class="col-6">
+        <p class="mb-0">Line Number</p>
+        <h6 class="mb-0">{{ data.Line }}</h6>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3 px-3">
+    <div *ngIf="data.U_Approval === 'Open'">
+      <div class="starting-opt">
+        <div class="row">
+          <div class="col-6 d-flex justify-content-center align-items-center">
+            <img
+              class="create-back"
+              src="../../../../../assets/images/whites/qc.jpg"
+              alt=""
+            />
+          </div>
+          <div class="col-6">
+            <div class="create-option-back pt-5">
+              <div>
+                <h6 class="mb-0">Start Quality-Control Inspection Process</h6>
+                <p class="mb-0 grey-txt">
+                  Initiates the formal quality control (QC) inspection procedure
+                  to verify that products, components, or processes meet defined
+                  specifications and quality standards. This process involves
+                  selecting the appropriate inspection type (incoming,
+                  in-process, or final), preparing necessary tools and
+                  documentation, recording inspection results, and determining
+                  the product’s compliance status. The outcome ensures only
+                  quality-compliant items proceed to the next phase, while
+                  non-conformities trigger corrective actions and documentation
+                  for traceability.
+                </p>
+              </div>
+              <button (click)="startInspection()" class="btn btn-info mt-2">
+                <span *ngIf="!isStarting">Start Inspection</span>
+                <span *ngIf="isStarting"
+                  >Starting&nbsp;
+                  <i
+                    class="bx bx-loader bx-spin align-middle ms-1 fs-4 text-white"
+                  ></i
+                ></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="data.U_Approval === 'Pending'">
+      <div class="d-flex justify-content-between mb-3">
+        <h6 class="mb-0 text-grey">
+          QC Parameter - Observed Values ( for GRN Stage )
+        </h6>
+
+        <div><p class="badge bg-warning mb-0 py-1 px-2">Pending</p></div>
+      </div>
+      <!-- Parameter table -->
+      <form [formGroup]="form3" (ngSubmit)="submit_form3()">
+        <table
+          class="table table-sm table-bordered mb-0 align-middle custom-table"
+        >
+          <thead>
+            <tr>
+              <th class="item-table-th">#</th>
+              <th class="item-table-th">Parameter Name</th>
+              <th class="item-table-th">Parameter Code</th>
+              <th class="item-table-th">UOM</th>
+              <th class="item-table-th">Mandatory</th>
+              <th class="item-table-th">Value ( Notation )</th>
+              <th class="item-table-th">Value ( for 'X')</th>
+              <th class="item-table-th">Observed Value</th>
+            </tr>
+          </thead>
+
+          <tbody *ngIf="loadingItems">
+            <tr>
+              <td [colSpan]="8">
+                <div class="my-5 py-5">
+                  <app-content-loader
+                    loadText="Loading QC Parameters"
+                  ></app-content-loader>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+
+          <tbody *ngIf="!loadingItems && itemList.controls.length === 0">
+            <tr>
+              <td [colSpan]="8">
+                <app-no-data></app-no-data>
+              </td>
+            </tr>
+          </tbody>
+
+          <tbody *ngIf="!loadingItems && itemList.controls.length !== 0">
+            <tr *ngFor="let item of itemList.controls; let j = index">
+              <td>{{ j + 1 }}</td>
+              <td>{{ item.value.parameterName }}</td>
+              <td>{{ item.value.parameterCode }}</td>
+              <td>{{ item.value.uom }}</td>
+              <td>
+                <span *ngIf="!item.value.mandatory" class="text-secondary"
+                  ><i class="far fa-times-circle"></i
+                ></span>
+                <span *ngIf="item.value.mandatory" class="text-danger"
+                  ><i class="far fa-check-circle"></i
+                ></span>
+              </td>
+              <td>{{ item.value.type }} - {{ item.value.category }}</td>
+              <td>
+                {{
+                  valueFetcher(
+                    item.value.category,
+                    item.value.type,
+                    item.value.minValue,
+                    item.value.maxValue,
+                    item.value.stdValue
+                  )
+                }}
+              </td>
+              <td>
+                <app-input-field
+                  [control]="item.controls.observedValue"
+                  inputId="obsVal"
+                  placeHolder="observed value"
+                  [isSubmit]="isSubmit_form3"
+                  [readonly]="true"
+                >
+                </app-input-field>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>

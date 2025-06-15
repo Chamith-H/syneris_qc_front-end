@@ -1,0 +1,39 @@
+<app-page-title [content]="headerItems"></app-page-title>
+
+<div class="row my-3 gx-0">
+  <div class="col-3">
+    <div class="stage-card p-3">
+      <h6 class="mb-0">Good Receipt Note Stage</h6>
+      <p class="mb-0 mt-2">
+        The Goods Receipt Note (GRN) stage in SAP refers to the process of
+        documenting the receipt of goods into a company's inventory from a
+        supplier or vendor. It is a critical part of the Procure-to-Pay (P2P)
+        cycle and ensures that the company acknowledges the receipt of goods
+        ordered via a Purchase Order (PO).
+      </p>
+    </div>
+  </div>
+  <div class="col-9">
+    <div class="col-des p-3">
+      <div class="d-flex justify-content-between">
+        <h6 class="mb-0">ITEM - QC PARAMETER RELATIONS</h6>
+        <button (click)="createRelation()" class="btn btn-sm btn-primary">
+          Create Relation
+        </button>
+      </div>
+
+      <div class="mt-3">
+        <app-filter-table
+          [loading]="isLoading"
+          [colcount]="8"
+          [tableOptions]="filterTable"
+          (pageChanger)="changePage($event)"
+          (actionSetter)="do_TableAction($event)"
+          (searchFilter)="act_filterTable()"
+          (resetFilter)="act_resetTable()"
+          (filterValues)="change_filters($event)"
+        ></app-filter-table>
+      </div>
+    </div>
+  </div>
+</div>

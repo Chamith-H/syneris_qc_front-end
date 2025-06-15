@@ -1,0 +1,68 @@
+img {
+  width: 40px;
+}
+
+/* HTML: <div class="loader-x"></div> */
+.loader-x {
+  width: 8px;
+  aspect-ratio: 1;
+  display: grid;
+  animation: l14 4s infinite;
+}
+.loader-x::before,
+.loader-x::after {
+  content: "";
+  grid-area: 1/1;
+  border: 4px solid;
+  border-radius: 50%;
+  border-color: #c5110b #c5110b;
+  animation: l14 0.5s infinite linear;
+}
+.loader-x::after {
+  border-color: #c5110b00 #c5110b00 #0c1ec9 #0c1ec9;
+  animation-direction: reverse;
+}
+@keyframes l14 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 100px;
+  aspect-ratio: 1;
+  border-radius: 100%;
+  background: #aa1b1b00;
+  box-shadow: 0 0 0 0 #0c1fc944;
+  animation: l2 1.5s infinite linear;
+  position: relative;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 100%;
+  box-shadow: 0 0 0 0 #0c1fc92a;
+  animation: inherit;
+  animation-delay: -0.5s;
+}
+.loader:after {
+  animation-delay: -1s;
+}
+@keyframes l2 {
+  100% {
+    box-shadow: 0 0 0 100px #0000;
+  }
+}
+
+.custom-class {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
