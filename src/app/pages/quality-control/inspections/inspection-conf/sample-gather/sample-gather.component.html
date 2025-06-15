@@ -42,10 +42,10 @@
       </p>
       <div class="d-flex">
         <div class="width1 table-w grey-twx">
-          <p class="mb-0">QC Parameters & Standard Values</p>
+          <h6 class="mb-0">QC Parameters & Standard Values</h6>
         </div>
         <div class="width2 table-w grey-twx">
-          <p class="mb-0">Observed Values For Samples</p>
+          <h6 class="mb-0">Observed Values For Samples</h6>
         </div>
       </div>
       <div class="d-flex">
@@ -53,7 +53,7 @@
           <table
             class="table table-sm table-bordered mb-0 align-middle custom-table"
           >
-            <thead>
+            <thead class="table-light">
               <tr>
                 <th class="sticky-col">Pameter Name</th>
                 <th class="sticky-col">UOM</th>
@@ -62,8 +62,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let row of parameterData">
-                <td class="sticky-col co-s">{{ row.parameter.name }}</td>
-                <td class="sticky-col co-s">{{ row.parameter.uom.name }}</td>
+                <td class="sticky-col">{{ row.parameter.name }}</td>
+                <td class="sticky-col">{{ row.parameter.uom.name }}</td>
                 <td class="sticky-col co-s">{{ row.itemCode }}</td>
               </tr>
             </tbody>
@@ -75,7 +75,7 @@
             <table
               class="table table-sm table-bordered mb-0 align-middle custom-table"
             >
-              <thead>
+              <thead class="table-light">
                 <tr>
                   <th *ngFor="let col of sampleCols">{{ col.name }}</th>
                 </tr>
