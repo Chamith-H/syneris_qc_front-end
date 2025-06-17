@@ -21,9 +21,9 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RelationSetterComponent } from "./stages/relation-setter/relation-setter.component";
 import { NgStepperModule } from "angular-ng-stepper";
 import { CdkStepperModule } from "@angular/cdk/stepper";
-import { InspectionConfComponent } from './inspections/inspection-conf/inspection-conf.component';
-import { InspectionViewComponent } from './inspections/inspection-view/inspection-view.component';
-import { SampleGatherComponent } from './inspections/inspection-conf/sample-gather/sample-gather.component';
+import { InspectionConfComponent } from "./inspections/inspection-conf/inspection-conf.component";
+import { InspectionViewComponent } from "./inspections/inspection-view/inspection-view.component";
+import { SampleGatherComponent } from "./inspections/inspection-conf/sample-gather/sample-gather.component";
 
 const routes: Routes = [
   {
@@ -41,6 +41,18 @@ const routes: Routes = [
   {
     path: "inspections",
     component: InspectionsComponent,
+    canActivate: [RouteGuard],
+    data: { permission: fPermissions.VIEW_USERS_LIST },
+  },
+  {
+    path: "eligible-items",
+    component: EligibleItemsComponent,
+    canActivate: [RouteGuard],
+    data: { permission: fPermissions.VIEW_USERS_LIST },
+  },
+  {
+    path: "eligible-warehouses",
+    component: EligibleWarehousesComponent,
     canActivate: [RouteGuard],
     data: { permission: fPermissions.VIEW_USERS_LIST },
   },

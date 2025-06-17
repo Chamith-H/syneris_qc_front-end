@@ -35,14 +35,14 @@ export const MENU: MenuItem[] = [
           {
             id: 11,
             label: "Items",
-            link: "/master-data/items",
+            link: "/quality-control/eligible-items",
             parentId: 11,
             permission: fPermissions.VIEW_USERS_LIST,
           },
           {
             id: 11,
             label: "Warehouses",
-            link: "/master-data/items",
+            link: "/quality-control/eligible-warehouses",
             parentId: 11,
             permission: fPermissions.VIEW_USERS_LIST,
           },
@@ -77,14 +77,14 @@ export const MENU: MenuItem[] = [
           },
           {
             id: 11,
-            label: "Rejections",
+            label: "Approvals",
             link: "/master-data/items",
             parentId: 11,
             permission: fPermissions.VIEW_USERS_LIST,
           },
           {
             id: 11,
-            label: "Cancellations",
+            label: "Rejections",
             link: "/master-data/items",
             parentId: 11,
             permission: fPermissions.VIEW_USERS_LIST,

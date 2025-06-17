@@ -6,6 +6,7 @@ import { InspectionService } from "src/app/core/services/app-services/operations
 import { SuccessMessage } from "src/app/core/services/shared/success-message.service";
 import Swal from "sweetalert2";
 import { SampleGatherComponent } from "./sample-gather/sample-gather.component";
+import { DateShower } from "src/app/core/services/shared/date-shower.service";
 
 @Component({
   selector: "app-inspection-conf",
@@ -49,7 +50,8 @@ export class InspectionConfComponent {
     private successMessage: SuccessMessage,
     private modalService: BsModalService,
     public fb: FormBuilder,
-    public toastr: ToastrService
+    public toastr: ToastrService,
+    public dateShower: DateShower
   ) {
     this.form2 = this.fb.group({
       method: [null, [Validators.required]],
@@ -110,6 +112,10 @@ export class InspectionConfComponent {
   }
 
   isStarting: boolean = false;
+
+  getDate() {
+    return this.dateShower.viewDate();
+  }
 
   startInspection() {
     this.isStarting = true;
