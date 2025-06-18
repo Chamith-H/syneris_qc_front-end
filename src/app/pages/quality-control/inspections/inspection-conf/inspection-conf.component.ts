@@ -228,31 +228,50 @@ export class InspectionConfComponent {
   }
 
   submit_form3() {
-    // this.isSaving = true;
+    this.isSaving = true;
     const flatSamplingData = this.flattenSamplingData();
-    console.log(flatSamplingData);
 
-    // const body = {
-    //   stageName: "GRN",
-    //   docNum: this.data.DocNum,
-    //   itemCode: this.data.ItemCode,
-    //   line: this.data.Line,
-    //   obsData: this.form3.value.DocumentLines,
-    // };
+    const body = {
+      data: flatSamplingData,
+    };
 
-    // this.inspectionService.updateObserveds(body).subscribe({
-    //   next: (data: any) => {
-    //     this.isSaving = false;
-    //     this.itemList.clear();
-    //     data.forEach((m_data: any) => {
-    //       this.itemList.push(this.createItemRow(m_data));
-    //     });
-    //   },
-    //   error: (err) => {
-    //     console.log(err);
-    //     this.isSaving = false;
-    //   },
-    // });
+    this.inspectionService.saveData(body).subscribe({
+      next: (data: any) => {
+        this.isSaving = false;
+        this.itemList.clear();
+
+        this.loadingItems = true;
+
+        const body = {
+          stageName: "GRN",
+          docNum: this.data.DocNum,
+          itemCode: this.data.ItemCode,
+          round: this.data.U_Round,
+        };
+
+        this.inspectionService.checkingItems(body).subscribe({
+          next: (data: any) => {
+            this.loadingItems = false;
+
+            if (data.length > 0) {
+              this.sampleCols = data[0].samplingData.map((s) => s.sampleName);
+            }
+
+            data.forEach((m_data: any) => {
+              this.itemList.push(this.createItemRow(m_data));
+            });
+          },
+          error: (err) => {
+            console.log(err);
+            this.loadingItems = false;
+          },
+        });
+      },
+      error: (err) => {
+        console.log(err);
+        this.isSaving = false;
+      },
+    });
   }
 
   loadingOpend: boolean = false;

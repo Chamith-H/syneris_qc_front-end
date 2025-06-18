@@ -1,5 +1,5 @@
 .data-aligner {
-  background-color: #263592;
+  background-color: #000000;
 }
 
 .data-aligner p {
@@ -11,11 +11,15 @@
 }
 
 .create-back {
-  width: 90%;
+  height: 200px;
 }
 
 .grey-txt {
   color: rgb(77, 77, 77);
+}
+
+.grey-txt-n {
+  color: rgb(143, 143, 143);
 }
 
 .sep-border {
@@ -25,15 +29,69 @@
 }
 
 .custom-table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+  table-layout: auto;
   border-color: rgb(220, 220, 220);
 }
 
 .item-table-th {
-  background-color: rgba(50, 69, 190, 0.077);
+  background-color: rgba(0, 34, 255, 0.884);
   color: rgb(0, 0, 0);
   font-weight: 500;
 }
 
+.co-s {
+  background-color: rgba(0, 255, 64, 0.055);
+}
+
+.width2 {
+  width: 45vw;
+  overflow-x: auto;
+}
+
+.width1 {
+  width: 55vw;
+}
+
+.custom-table td {
+  height: 50px;
+  vertical-align: middle;
+}
+
+.table-w {
+  border-style: solid;
+  border-color: rgb(220, 220, 220);
+  border-width: 1px;
+  border-bottom-width: 0px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding-left: 5px;
+  background-color: #ffffff28;
+  color: #000000;
+}
+
 .text-grey {
-  color: rgb(158, 158, 158);
+  color: #858585;
+}
+
+input::placeholder {
+  color: #a5a5a5;
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.sep-line {
+  display: flex;
+}
+
+.sep-line h6 {
+  width: 150px;
+}
+
+.sep-line p {
+  width: calc(100% - 150px);
+  color: #858585;
 }

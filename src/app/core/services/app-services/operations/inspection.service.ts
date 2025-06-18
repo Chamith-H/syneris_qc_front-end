@@ -44,6 +44,10 @@ export class InspectionService {
     return this.http.post(this.baseUrl + "/create-samples", data);
   }
 
+  saveData(data: any): Observable<any> {
+    return this.http.post(this.baseUrl + "/save-data", data);
+  }
+
   setAction(id: string, data: any): Observable<any> {
     return this.http.put(this.baseUrl + `/set-action/${id}`, data);
   }

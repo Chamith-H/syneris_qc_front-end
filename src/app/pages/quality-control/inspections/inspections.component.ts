@@ -226,7 +226,7 @@ export class InspectionsComponent {
 
     this.inspectionService.getAll(page, filter).subscribe({
       next: (res) => {
-        console.log(res)
+        console.log(res);
         this.filterTable.paginationItems.currentPage = res.currentPage;
         this.filterTable.paginationItems.pageCount = res.pageCount;
         this.filterTable.paginationItems.dataCount = res.dataCount;
@@ -234,6 +234,13 @@ export class InspectionsComponent {
 
         const dataMapper = res.data.map((r_data: any) => {
           r_data.reqNo = `INS-${r_data.DocNum}-L${r_data.Line}-R${r_data.U_Round}`;
+
+          if (r_data.U_Approval === "Open" || r_data.U_Approval === "Pending") {
+            r_data.showConfig = "Y";
+          } else {
+            r_data.showConfig = "N";
+          }
+
           return r_data;
         });
 
@@ -258,6 +265,7 @@ export class InspectionsComponent {
       this.modalRef = this.modalService.show(InspectionViewComponent, {
         initialState: {
           data: option.data,
+          stage: "GRN",
         },
         backdrop: "static",
 
@@ -279,7 +287,7 @@ export class InspectionsComponent {
       this.modalRef = this.modalService.show(InspectionConfComponent, {
         initialState: {
           data: option.data,
-          stage: 'GRN'
+          stage: "GRN",
         },
         backdrop: "static",
 

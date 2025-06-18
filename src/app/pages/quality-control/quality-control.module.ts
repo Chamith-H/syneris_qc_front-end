@@ -5,8 +5,6 @@ import { EligibleWarehousesComponent } from "./eligible-warehouses/eligible-ware
 import { QcParametersComponent } from "./qc-parameters/qc-parameters.component";
 import { StagesComponent } from "./stages/stages.component";
 import { InspectionsComponent } from "./inspections/inspections.component";
-import { RejectionsComponent } from "./rejections/rejections.component";
-import { CancellationsComponent } from "./cancellations/cancellations.component";
 import { ParametersFormComponent } from "./qc-parameters/parameters-form/parameters-form.component";
 import { ParametersViewComponent } from "./qc-parameters/parameters-view/parameters-view.component";
 import { UomComponent } from "./qc-parameters/uom/uom.component";
@@ -66,8 +64,6 @@ const routes: Routes = [
     QcParametersComponent,
     StagesComponent,
     InspectionsComponent,
-    RejectionsComponent,
-    CancellationsComponent,
     ParametersFormComponent,
     ParametersViewComponent,
     UomComponent,

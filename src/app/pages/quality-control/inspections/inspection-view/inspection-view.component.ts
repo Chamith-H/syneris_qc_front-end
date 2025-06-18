@@ -1,9 +1,13 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { ToastrService } from "ngx-toastr";
 import { InspectionService } from "src/app/core/services/app-services/operations/inspection.service";
 import { SuccessMessage } from "src/app/core/services/shared/success-message.service";
 import Swal from "sweetalert2";
+import { SampleGatherComponent } from "../inspection-conf/sample-gather/sample-gather.component";
+import { DateShower } from "src/app/core/services/shared/date-shower.service";
+import { GetActionComponent } from "../inspection-conf/get-action/get-action.component";
 
 @Component({
   selector: "app-inspection-view",
@@ -12,10 +16,29 @@ import Swal from "sweetalert2";
 })
 export class InspectionViewComponent {
   @Input() data: any = null;
-  @Input() parameters: any[] = [];
+  @Input() stage: string = "";
 
   @Output() closePopup = new EventEmitter<any>();
   @Output() closePopupAndReload = new EventEmitter<any>();
+
+  modalRef?: BsModalRef;
+
+  sampleCols: string[] = [];
+  parameterData: any[] = [];
+
+  sampleMethods = [
+    {
+      name: "Single sample test",
+      _id: "Single-Test",
+    },
+    {
+      name: "Multi sample test",
+      _id: "Multi-Test",
+    },
+  ];
+
+  form2: FormGroup;
+  isSubmit_form2: boolean = false;
 
   form3: FormGroup;
   isSubmit_form3: boolean = false;
@@ -26,43 +49,57 @@ export class InspectionViewComponent {
   constructor(
     private inspectionService: InspectionService,
     private successMessage: SuccessMessage,
+    private modalService: BsModalService,
     public fb: FormBuilder,
-    public toastr: ToastrService
+    public toastr: ToastrService,
+    public dateShower: DateShower
   ) {
+    this.form2 = this.fb.group({
+      method: [null, [Validators.required]],
+      sampleCount: [null, [Validators.required]],
+    });
+
     this.form3 = this.fb.group({
       DocumentLines: this.createitemList(),
     });
+  }
+
+  changeMethod() {
+    const method = this.form2.value.method;
+
+    if (method === "Single-Test") {
+      this.form2.get("sampleCount").setValue(1);
+    } else {
+      this.form2.get("sampleCount").setValue(2);
+    }
   }
 
   createitemList(): FormArray {
     return this.itemsFormBuilder.array([]);
   }
 
-  createItemRow(
-    checkingId: string,
-    parameterName: string,
-    parameterCode: string,
-    uom: string,
-    mandatory: boolean,
-    category: string,
-    type: string,
-    minValue: string,
-    maxValue: string,
-    stdValue: string,
-    observedValue: string
-  ): FormGroup {
+  // ✅ UPDATED createItemRow
+  createItemRow(parameter: any): FormGroup {
     return this.fb.group({
-      checkingId: [checkingId, [Validators.required]],
-      parameterName: [parameterName],
-      parameterCode: [parameterCode],
-      uom: [uom],
-      category: [category],
-      type: [type],
-      mandatory: [mandatory],
-      minValue: [minValue],
-      maxValue: [maxValue],
-      stdValue: [stdValue],
-      observedValue: [observedValue],
+      parameterId: [parameter.parameterId, [Validators.required]],
+      parameterName: [parameter.parameterIdenity],
+      uom: [parameter.parameterUom],
+      category: [parameter.parameterCategory],
+      type: [parameter.parameterType],
+      mandatory: [parameter.mandatory],
+      minValue: [parameter.minValue],
+      maxValue: [parameter.maxValue],
+      stdValue: [parameter.stdValue],
+      samplingData: this.fb.array(
+        parameter.samplingData.map((sample: any) =>
+          this.fb.group({
+            sampleId: [sample.sampleId],
+            sampleName: [sample.sampleName],
+            sampleIndex: [sample.sampleIndex],
+            observedValue: [sample.observedValue, Validators.required],
+          })
+        )
+      ),
     });
   }
 
@@ -70,44 +107,70 @@ export class InspectionViewComponent {
     return this.form3.get("DocumentLines") as FormArray;
   }
 
+  // ✅ NEW helper
+  getSamplingData(formGroup: FormGroup): FormArray {
+    return formGroup.get("samplingData") as FormArray;
+  }
+
   isStarting: boolean = false;
 
+  getDate() {
+    return this.dateShower.viewDate();
+  }
+
   startInspection() {
-    Swal.fire({
-      title: "Are you sure?",
-      text: `You want to start the inspection?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, start it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.isStarting = true;
+    this.isStarting = true;
 
-        const body = {
-          stageName: "GRN",
-          docNum: this.data.DocNum,
-          itemCode: this.data.ItemCode,
-          line: this.data.Line,
-        };
+    const body = {
+      stageName: "GRN",
+      docNum: this.data.DocNum,
+      itemCode: this.data.ItemCode,
+      line: this.data.Line,
+      method: this.form2.value.method,
+      sampleCount: this.form2.value.sampleCount,
+    };
 
-        this.inspectionService.startInspection(body).subscribe({
-          next: (data: any) => {
-            this.isStarting = false;
-
-            this.successMessage.show(data.message);
-            this.data.U_Approval = "Pending";
-            this.parameters = data.data;
-
-            console.log(data.data);
-          },
-          error: (err) => {
-            console.log(err);
-            this.isStarting = false;
-          },
+    this.inspectionService.startInspection(body).subscribe({
+      next: (data: any) => {
+        const itemParameterMapper = data.values.map((i_param: any) => {
+          const matching = data.sampleValues.find(
+            (s: any) => s.parameterId === i_param.parameterId
+          );
+          return {
+            ...i_param,
+            samplingData: matching?.samplingData || [],
+          };
         });
-      }
+
+        this.isStarting = false;
+        this.sampleCols = data.samples;
+        this.parameterData = itemParameterMapper;
+
+        this.modalRef = this.modalService.show(SampleGatherComponent, {
+          initialState: {
+            sampleCols: data.samples,
+            parameterData: itemParameterMapper,
+            sampleValues: data.sampleValues,
+            data: this.data,
+            stage: this.stage,
+          },
+          backdrop: "static",
+          class: "modal-xl modal-dialog-centered",
+        });
+
+        this.modalRef.content.closePopup.subscribe(() => {
+          this.modalRef.hide();
+        });
+
+        this.modalRef.content.closePopupAndReload.subscribe(() => {
+          this.modalRef.hide();
+          this.closePopupAndReload.emit();
+        });
+      },
+      error: (err) => {
+        console.log(err);
+        this.isStarting = false;
+      },
     });
   }
 
@@ -151,39 +214,57 @@ export class InspectionViewComponent {
 
   onReset() {}
 
+  flattenSamplingData(): any[] {
+    const documentLines = this.form3.value.DocumentLines;
+    const allSamplingData: any[] = [];
+
+    documentLines.forEach((line: any) => {
+      if (line.samplingData && Array.isArray(line.samplingData)) {
+        allSamplingData.push(...line.samplingData);
+      }
+    });
+
+    return allSamplingData;
+  }
+
   submit_form3() {
     this.isSaving = true;
+    const flatSamplingData = this.flattenSamplingData();
 
     const body = {
-      stageName: "GRN",
-      docNum: this.data.DocNum,
-      itemCode: this.data.ItemCode,
-      line: this.data.Line,
-      obsData: this.form3.value.DocumentLines,
+      data: flatSamplingData,
     };
 
-    this.inspectionService.updateObserveds(body).subscribe({
+    this.inspectionService.saveData(body).subscribe({
       next: (data: any) => {
         this.isSaving = false;
-
         this.itemList.clear();
 
-        data.map((m_data: any) => {
-          this.itemList.push(
-            this.createItemRow(
-              m_data._id,
-              m_data.parameter.name,
-              m_data.parameter.code,
-              m_data.parameter.uom.code + " - " + m_data.parameter.uom.name,
-              m_data.mandatory,
-              m_data.parameter.category,
-              m_data.parameter.type,
-              m_data.minValue,
-              m_data.maxValue,
-              m_data.stdValue,
-              m_data.observedValue
-            )
-          );
+        this.loadingItems = true;
+
+        const body = {
+          stageName: "GRN",
+          docNum: this.data.DocNum,
+          itemCode: this.data.ItemCode,
+          round: this.data.U_Round,
+        };
+
+        this.inspectionService.checkingItems(body).subscribe({
+          next: (data: any) => {
+            this.loadingItems = false;
+
+            if (data.length > 0) {
+              this.sampleCols = data[0].samplingData.map((s) => s.sampleName);
+            }
+
+            data.forEach((m_data: any) => {
+              this.itemList.push(this.createItemRow(m_data));
+            });
+          },
+          error: (err) => {
+            console.log(err);
+            this.loadingItems = false;
+          },
         });
       },
       error: (err) => {
@@ -193,37 +274,71 @@ export class InspectionViewComponent {
     });
   }
 
+  loadingOpend: boolean = false;
+
+  getAction(action: string) {
+    this.modalRef = this.modalService.show(GetActionComponent, {
+      initialState: {
+        action: action,
+        id: this.data._id,
+        data: this.data,
+        stage: this.stage,
+      },
+      backdrop: "static",
+      class: "modal-lg modal-dialog-centered",
+    });
+
+    this.modalRef.content.closePopup.subscribe(() => {
+      this.modalRef.hide();
+    });
+
+    this.modalRef.content.closePopupAndReload.subscribe(() => {
+      this.modalRef.hide();
+      this.closePopupAndReload.emit();
+    });
+  }
+
   ngOnInit() {
-    if (this.data.U_Approval === "Pending") {
+    if (this.data.U_Approval === "Open") {
+      this.loadingOpend = true;
+
+      const body = {
+        stageName: this.stage,
+        itemCode: this.data.ItemCode,
+      };
+
+      this.inspectionService.startConf(body).subscribe({
+        next: (data: any) => {
+          this.loadingOpend = false;
+          this.form2.patchValue(data);
+        },
+        error: (err) => {
+          console.log(err);
+          this.loadingOpend = false;
+        },
+      });
+    }
+
+    if (this.data.U_Approval !== "Open") {
       this.loadingItems = true;
 
       const body = {
         stageName: "GRN",
         docNum: this.data.DocNum,
         itemCode: this.data.ItemCode,
-        line: this.data.Line,
+        round: this.data.U_Round,
       };
 
       this.inspectionService.checkingItems(body).subscribe({
         next: (data: any) => {
           this.loadingItems = false;
 
-          data.map((m_data: any) => {
-            this.itemList.push(
-              this.createItemRow(
-                m_data._id,
-                m_data.parameter.name,
-                m_data.parameter.code,
-                m_data.parameter.uom.code + " - " + m_data.parameter.uom.name,
-                m_data.mandatory,
-                m_data.parameter.category,
-                m_data.parameter.type,
-                m_data.minValue,
-                m_data.maxValue,
-                m_data.stdValue,
-                m_data.observedValue
-              )
-            );
+          if (data.length > 0) {
+            this.sampleCols = data[0].samplingData.map((s) => s.sampleName);
+          }
+
+          data.forEach((m_data: any) => {
+            this.itemList.push(this.createItemRow(m_data));
           });
         },
         error: (err) => {

@@ -76,3 +76,9 @@
 .text-grey {
   color: #858585;
 }
+
+input::placeholder {
+  color: #a5a5a5;
+  font-size: 12px;
+  font-weight: 300;
+}
