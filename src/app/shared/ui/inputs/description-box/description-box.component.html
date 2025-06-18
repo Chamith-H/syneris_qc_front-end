@@ -1,7 +1,8 @@
 <div class="mb-3" [style.height]="height">
-  <label *ngIf="label !== ''" [for]="inputId" class="form-label-light">{{
-    label
-  }}</label>
+  <label *ngIf="label" [for]="inputId" class="form-label-light"
+    ><span *ngIf="mandatory && label !== ''" class="text-danger">*</span>
+    {{ label }}</label
+  >
   <textarea
     [formControl]="control"
     class="form-control"

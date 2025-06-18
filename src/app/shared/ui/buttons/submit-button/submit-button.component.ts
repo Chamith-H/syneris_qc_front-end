@@ -7,6 +7,7 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 })
 export class SubmitButtonComponent {
   @Input() isSaving: boolean = false;
+  @Input() defaultText = "Save";
   @Input() loaderText: string = "Saving";
   @Input() saveType: string = "button";
   @Input() reset: boolean = true;

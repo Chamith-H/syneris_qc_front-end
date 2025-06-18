@@ -7,6 +7,7 @@ import { SuccessMessage } from "src/app/core/services/shared/success-message.ser
 import Swal from "sweetalert2";
 import { SampleGatherComponent } from "./sample-gather/sample-gather.component";
 import { DateShower } from "src/app/core/services/shared/date-shower.service";
+import { GetActionComponent } from "./get-action/get-action.component";
 
 @Component({
   selector: "app-inspection-conf",
@@ -255,6 +256,28 @@ export class InspectionConfComponent {
   }
 
   loadingOpend: boolean = false;
+
+  getAction(action: string) {
+    this.modalRef = this.modalService.show(GetActionComponent, {
+      initialState: {
+        action: action,
+        id: this.data._id,
+        data: this.data,
+        stage: this.stage,
+      },
+      backdrop: "static",
+      class: "modal-lg modal-dialog-centered",
+    });
+
+    this.modalRef.content.closePopup.subscribe(() => {
+      this.modalRef.hide();
+    });
+
+    this.modalRef.content.closePopupAndReload.subscribe(() => {
+      this.modalRef.hide();
+      this.closePopupAndReload.emit();
+    });
+  }
 
   ngOnInit() {
     if (this.data.U_Approval === "Open") {

@@ -24,6 +24,7 @@ import { CdkStepperModule } from "@angular/cdk/stepper";
 import { InspectionConfComponent } from "./inspections/inspection-conf/inspection-conf.component";
 import { InspectionViewComponent } from "./inspections/inspection-view/inspection-view.component";
 import { SampleGatherComponent } from "./inspections/inspection-conf/sample-gather/sample-gather.component";
+import { GetActionComponent } from './inspections/inspection-conf/get-action/get-action.component';
 
 const routes: Routes = [
   {
@@ -77,6 +78,7 @@ const routes: Routes = [
     InspectionConfComponent,
     InspectionViewComponent,
     SampleGatherComponent,
+    GetActionComponent,
   ],
   imports: [
     CommonModule,

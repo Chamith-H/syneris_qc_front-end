@@ -15,4 +15,5 @@ export class DescriptionBoxComponent {
   @Input() isSubmit = false;
   @Input() height = "100px";
   @Input() placeHolder = "";
+  @Input() mandatory = false;
 }

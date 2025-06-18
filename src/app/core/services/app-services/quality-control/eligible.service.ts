@@ -27,4 +27,8 @@ export class EligibleService {
       params: params,
     });
   }
+
+  warehouseDrop(data: any): Observable<any> {
+    return this.http.post(this.baseUrl + "/warehouse-drop", data);
+  }
 }
