@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   defaultauth: "fackbackend",
-  apiUrl: "http://localhost:3000",
+  apiUrl: "http://localhost:9503",
 };
 
 /*

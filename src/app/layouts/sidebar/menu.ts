@@ -15,10 +15,24 @@ export const MENU: MenuItem[] = [
   },
   {
     id: 3,
-    label: "Gate Pass",
+    label: "Security In",
     icon: "far fa-credit-card",
-    link: "/gate-pass",
-    subItems: [],
+    subItems: [
+      {
+        id: 21,
+        label: "Gate Pass",
+        link: "/gate-pass",
+        parentId: 28,
+        permission: fPermissions.VIEW_USERS_LIST,
+      },
+      {
+        id: 21,
+        label: "Weighbridge",
+        link: "/gate-pass/weigh-bridge",
+        parentId: 28,
+        permission: fPermissions.VIEW_USERS_LIST,
+      },
+    ],
   },
   {
     id: 10,

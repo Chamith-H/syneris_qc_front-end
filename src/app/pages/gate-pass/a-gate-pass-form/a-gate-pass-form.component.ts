@@ -106,10 +106,15 @@ export class AGatePassFormComponent {
     });
   }
 
-  createItemRow(itemCode: string, checkedQuantity: number): FormGroup {
+  createItemRow(
+    itemCode: string,
+    checkedQuantity: number,
+    uom: string
+  ): FormGroup {
     return this.fb.group({
       itemCode: [itemCode, [Validators.required]],
       checkedQuantity: [checkedQuantity],
+      uom: [uom],
     });
   }
 
@@ -272,7 +277,9 @@ export class AGatePassFormComponent {
     this.selectedPoValue = selectedPo;
 
     selectedPo.DocumentLines.map((d_line: any) => {
-      this.itemList.push(this.createItemRow(d_line.ItemCode, null));
+      this.itemList.push(
+        this.createItemRow(d_line.ItemCode, null, d_line.UoMCode)
+      );
     });
   }
 

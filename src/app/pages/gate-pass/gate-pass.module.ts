@@ -13,6 +13,8 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgStepperModule } from "angular-ng-stepper";
 import { CdkStepperModule } from "@angular/cdk/stepper";
 import { ViewPoComponent } from "./a-gate-pass-form/view-po/view-po.component";
+import { WeighBridgeComponent } from "./weigh-bridge/weigh-bridge.component";
+import { WeightRecordComponent } from './weigh-bridge/weight-record/weight-record.component';
 
 const routes: Routes = [
   //!--> Routes for users............................................|
@@ -43,6 +45,13 @@ const routes: Routes = [
     canActivate: [RouteGuard],
     data: { permission: fPermissions.VIEW_USERS_LIST },
   },
+
+  {
+    path: "weigh-bridge",
+    component: WeighBridgeComponent,
+    canActivate: [RouteGuard],
+    data: { permission: fPermissions.VIEW_USERS_LIST },
+  },
 ];
 
 @NgModule({
@@ -53,6 +62,8 @@ const routes: Routes = [
     ViewGatePassComponent,
     AGatePassFormComponent,
     ViewPoComponent,
+    WeighBridgeComponent,
+    WeightRecordComponent,
   ],
   imports: [
     CommonModule,
