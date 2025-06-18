@@ -1,5 +1,5 @@
-<div class="mb-3">
-  <label [for]="dropdownId" class="form-label-light"
+<div [ngClass]="label ? 'mb-3' : ''">
+  <label *ngIf="label" [for]="dropdownId" class="form-label-light"
     ><span *ngIf="mandatory" class="text-danger">*</span> {{ label }}</label
   >
   <div class="DropdownField">
@@ -13,8 +13,18 @@
         'border-danger': isSubmit && control.invalid
       }"
     >
-      <option class="dropdown-placeholder" value="null" disabled selected hidden>Please select</option>
-      <option class="dropdown-placeholder" value="" disabled selected hidden>Please select</option>
+      <option
+        class="dropdown-placeholder"
+        value="null"
+        disabled
+        selected
+        hidden
+      >
+        Please select
+      </option>
+      <option class="dropdown-placeholder" value="" disabled selected hidden>
+        Please select
+      </option>
       <option
         *ngFor="let option of options"
         [value]="option._id"

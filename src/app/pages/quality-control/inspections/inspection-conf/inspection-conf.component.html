@@ -212,12 +212,35 @@
                       [formGroupName]="sampleIndex"
                     >
                       <input
+                        *ngIf="row.value.type !== 'Boolean'"
                         class="table-input-x"
                         type="text"
                         class="form-control"
                         formControlName="observedValue"
                         placeholder="Enter observed value"
                       />
+
+                      <select
+                        *ngIf="row.value.type === 'Boolean'"
+                        formControlName="observedValue"
+                        class="form-select"
+                      >
+                        <option
+                          class="dropdown-placeholder"
+                          value="null"
+                          disabled
+                          selected
+                          hidden
+                        >
+                          Please select
+                        </option>
+                        <option
+                          *ngFor="let option of booleanDrops"
+                          [value]="option._id"
+                        >
+                          {{ option.name }}
+                        </option>
+                      </select>
                     </td>
                   </ng-container>
                 </tr>

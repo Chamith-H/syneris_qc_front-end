@@ -23,6 +23,14 @@ export class InspectionConfComponent {
 
   modalRef?: BsModalRef;
 
+  booleanDrops = [
+    {
+      name: "Yes",
+      _id: "Yes",
+    },
+    { name: "No", _id: "No" },
+  ];
+
   sampleCols: string[] = [];
   parameterData: any[] = [];
 
@@ -275,6 +283,29 @@ export class InspectionConfComponent {
   }
 
   loadingOpend: boolean = false;
+
+  checkIsDrop(rowData: any) {
+    if (!rowData) {
+      return false;
+    }
+    console.log(this.parameterData);
+    // const parameter = this.parameterData.find(
+    //   (param: any) => param.parameter._id === rowData.value.parameterId
+
+    // );
+
+    // console.log(parameter.parameter.type);
+
+    // if (!parameter) {
+    //   return false;
+    // }
+
+    // if (parameter.parameter.type === "Boolean") {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
+  }
 
   getAction(action: string) {
     this.modalRef = this.modalService.show(GetActionComponent, {

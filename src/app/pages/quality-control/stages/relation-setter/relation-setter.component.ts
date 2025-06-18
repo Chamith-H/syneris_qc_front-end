@@ -10,6 +10,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ToastrService } from "ngx-toastr";
 import { Behavior } from "src/app/core/enums/shared-enums/behavior.enum";
 import { sMsg } from "src/app/core/models/shared/success-response.model";
+import { EligibleService } from "src/app/core/services/app-services/quality-control/eligible.service";
 import { QcParameterService } from "src/app/core/services/app-services/quality-control/qc-parameter.service";
 import { StageService } from "src/app/core/services/app-services/quality-control/stage.service";
 import { SuccessMessage } from "src/app/core/services/shared/success-message.service";
@@ -45,25 +46,34 @@ export class RelationSetterComponent {
   sampleMethods = [
     {
       name: "Single sample test",
-      _id: "Single-Test"
+      _id: "Single-Test",
     },
-        {
+    {
       name: "Multi sample test",
-      _id: "Multi-Test"
+      _id: "Multi-Test",
     },
-  ]
+  ];
+
+  booleanDrops = [
+    {
+      name: "Yes",
+      _id: "Yes",
+    },
+    { name: "No", _id: "No" },
+  ];
 
   constructor(
     public fb: FormBuilder,
     public toastr: ToastrService,
     private successMessage: SuccessMessage,
     private stageService: StageService,
-    private qcParameterService: QcParameterService
+    private qcParameterService: QcParameterService,
+    private eligibleService: EligibleService
   ) {
     this.form2 = this.fb.group({
       itemCode: [null, [Validators.required]],
       method: ["Single-Test", [Validators.required]],
-      sampleCount: [1, [Validators.required]]
+      sampleCount: [1, [Validators.required]],
     });
 
     this.form3 = this.fb.group({
@@ -72,12 +82,12 @@ export class RelationSetterComponent {
   }
 
   changeMethod() {
-    const method = this.form2.value.method
+    const method = this.form2.value.method;
 
-    if(method === 'Single-Test') {
-      this.form2.get('sampleCount').setValue(1)
-    }else {
-      this.form2.get('sampleCount').setValue(2)
+    if (method === "Single-Test") {
+      this.form2.get("sampleCount").setValue(1);
+    } else {
+      this.form2.get("sampleCount").setValue(2);
     }
   }
 
@@ -111,6 +121,22 @@ export class RelationSetterComponent {
   isItemDataLoading: boolean = false;
 
   changeItem() {}
+
+  getDrop(parameterId: string) {
+    if (!parameterId) {
+      return false;
+    } else {
+      const parameter = this.parameters.find(
+        (param: any) => param._id === parameterId
+      );
+
+      if (parameter.type === "Boolean") {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
 
   getParamDataCategory(parameterId: string) {
     if (!parameterId) {
@@ -274,19 +300,37 @@ export class RelationSetterComponent {
     }
   }
 
-  getItems() {
+  filterOptions = {
+    ItemCode: "",
+    ItemName: "",
+  };
+
+  currentPage: number = 1;
+  pageCount: number = 0;
+  dataCount: number = 0;
+
+  //!--> Get user roles list.....................................................................|
+  getItems(page: number, filter: any) {
     this.isItemDataLoading = true;
 
-    this.stageService.getItems().subscribe({
-      next: (data: any[]) => {
+    this.eligibleService.getAll(page, filter).subscribe({
+      next: (res) => {
+        this.currentPage = res.currentPage;
+        this.pageCount = res.pageCount;
+        this.dataCount = res.dataCount;
+
+        this.itemData = res.data;
         this.isItemDataLoading = false;
-        this.itemData = data;
       },
       error: (err) => {
         console.log(err);
         this.isItemDataLoading = false;
       },
     });
+  }
+
+  changePage(page: number) {
+    this.getItems(page, this.filterOptions);
   }
 
   getParameters() {
@@ -391,8 +435,12 @@ export class RelationSetterComponent {
     }
   }
 
+  clickFilter() {
+    this.getItems(1, this.filterOptions);
+  }
+
   ngOnInit() {
-    this.getItems();
+    this.getItems(1, this.filterOptions);
     this.getParameters();
   }
 }

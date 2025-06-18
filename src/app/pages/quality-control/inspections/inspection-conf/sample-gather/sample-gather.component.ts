@@ -19,6 +19,14 @@ export class SampleGatherComponent {
   @Output() closePopup = new EventEmitter<any>();
   @Output() closePopupAndReload = new EventEmitter<any>();
 
+  booleanDrops = [
+    {
+      name: "Yes",
+      _id: "Yes",
+    },
+    { name: "No", _id: "No" },
+  ];
+
   form!: FormGroup;
 
   constructor(
@@ -85,8 +93,26 @@ export class SampleGatherComponent {
     });
   }
 
+  checkIsDrop(rowData: any) {
+    if (!rowData) {
+      return false;
+    }
+    const parameter = this.parameterData.find(
+      (param: any) => param.parameter._id === rowData.value.parameter
+    );
+
+    if (!parameter) {
+      return false;
+    }
+
+    if (parameter.parameter.type === "Boolean") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   ngOnInit() {
-    console.log(this.data);
     this.form = this.fb.group({
       rows: this.fb.array([]),
     });

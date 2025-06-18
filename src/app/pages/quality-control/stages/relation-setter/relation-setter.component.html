@@ -18,11 +18,38 @@
       </ng-template>
 
       <section *ngIf="cdkStepper.selectedIndex === 0">
+        <label class="form-label-light"
+          ><span class="text-danger">*</span> Quality checking item (Select
+          one)</label
+        >
+        <div>
+          <div class="filter-inputs row gx-3 mb-3">
+            <div class="col-3">
+              <label>Item Code</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Enter item code"
+                [(ngModel)]="filterOptions.ItemCode"
+              />
+            </div>
+            <div class="col-3">
+              <label>Item Name</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Enter item name"
+                [(ngModel)]="filterOptions.ItemName"
+              />
+            </div>
+            <div class="col-6 d-flex justify-content-end align-items-end">
+              <button class="btn btn-info" (click)="clickFilter()">
+                <i class="fas fa-filter align-middle"></i> Filter
+              </button>
+            </div>
+          </div>
+        </div>
         <form [formGroup]="form2" (ngSubmit)="submit_form2()">
-           <label class="form-label-light"
-    ><span class="text-danger">*</span>
-    Quality checking item</label
-  >
           <table
             class="table table-sm table-bordered mb-0 align-middle custom-table"
           >
@@ -65,34 +92,136 @@
             </tbody>
           </table>
 
+          <div *ngIf="pageCount > 1" class="pagination-bar pt-2 pb-4">
+            <div class="page-dropper">
+              <p class="mb-0">
+                page {{ currentPage }} - of
+                <span>{{ pageCount }}</span>
+                pages
+              </p>
+            </div>
+
+            <div class="pagination-buttons mt-2">
+              <!-- !................................................................................ -->
+              <button
+                type="button"
+                class="btn btn-outline-secondary rounded-1 ms-1"
+                *ngIf="currentPage !== 1"
+                (click)="changePage(1)"
+              >
+                <span>
+                  <i class="fas fa-angle-double-left"></i>&nbsp;First
+                </span>
+              </button>
+
+              <!-- !................................................................................ -->
+              <button
+                type="button"
+                class="btn btn-outline-secondary rounded-1 ms-1"
+                *ngIf="currentPage > 1"
+                (click)="changePage(currentPage - 1)"
+              >
+                <span><i class="fas fa-angle-left"></i>&nbsp;Prev</span>
+              </button>
+
+              <!-- !................................................................................ -->
+              <button
+                type="button"
+                class="btn btn-outline-secondary rounded-1 ms-1"
+                *ngIf="currentPage > 2"
+                (click)="changePage(currentPage - 2)"
+              >
+                {{ currentPage - 2 }}
+              </button>
+
+              <!-- !................................................................................ -->
+              <button
+                type="button"
+                class="btn btn-outline-secondary rounded-1 ms-1"
+                *ngIf="currentPage > 1"
+                (click)="changePage(currentPage - 1)"
+              >
+                {{ currentPage - 1 }}
+              </button>
+
+              <!-- *................................................................................ -->
+              <button type="button" class="btn btn-primary rounded-1 ms-1">
+                {{ currentPage }}
+              </button>
+
+              <!-- *................................................................................ -->
+              <button
+                type="button"
+                class="btn btn-outline-secondary rounded-1 ms-1"
+                *ngIf="currentPage < pageCount"
+                (click)="changePage(currentPage + 1)"
+              >
+                {{ currentPage + 1 }}
+              </button>
+
+              <!-- !................................................................................ -->
+              <button
+                type="button"
+                class="btn btn-outline-secondary rounded-1 ms-1"
+                *ngIf="currentPage + 1 < pageCount"
+                (click)="changePage(currentPage + 2)"
+              >
+                {{ currentPage + 2 }}
+              </button>
+
+              <!-- !................................................................................ -->
+              <button
+                type="button"
+                class="btn btn-outline-secondary rounded-1 ms-1"
+                *ngIf="currentPage < pageCount"
+                (click)="changePage(currentPage + 1)"
+              >
+                <span>Next&nbsp;<i class="fas fa-angle-right"></i></span>
+              </button>
+
+              <!-- !................................................................................ -->
+              <button
+                type="button"
+                class="btn btn-outline-secondary rounded-1 ms-1"
+                *ngIf="currentPage !== pageCount"
+                (click)="changePage(pageCount)"
+              >
+                <span
+                  >Last&nbsp;
+                  <i class="fas fa-angle-double-right"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+
           <div class="row mt-4">
             <div class="col-6">
               <app-searchable-dropdown
-              [control]="form2.controls.method"
-              dropdownId="method"
-              label="Default quality checking method"
-              emptyError="Checking method be empty"
-              [options]="sampleMethods"
-              [isSubmit]="isSubmit_form2"
-              [mandatory]="true"
-              (onChange)="changeMethod()"
-            >
-            </app-searchable-dropdown>
+                [control]="form2.controls.method"
+                dropdownId="method"
+                label="Default quality checking method"
+                emptyError="Checking method be empty"
+                [options]="sampleMethods"
+                [isSubmit]="isSubmit_form2"
+                [mandatory]="true"
+                (onChange)="changeMethod()"
+              >
+              </app-searchable-dropdown>
             </div>
 
             <div class="col-6">
-               <app-input-field
-              [control]="form2.controls.sampleCount"
-              inputId="sampleCount"
-              label="Default sample count"
-              placeHolder="sample count"
-              emptyError="Sample count cannot be empty!"
-              [isSubmit]="isSubmit_form2"
-              [mandatory]="true"
-              type="number"
-              [readonly]="form2.value.method === 'Single-Test'"
-            >
-            </app-input-field>
+              <app-input-field
+                [control]="form2.controls.sampleCount"
+                inputId="sampleCount"
+                label="Default sample count"
+                placeHolder="sample count"
+                emptyError="Sample count cannot be empty!"
+                [isSubmit]="isSubmit_form2"
+                [mandatory]="true"
+                type="number"
+                [readonly]="form2.value.method === 'Single-Test'"
+              >
+              </app-input-field>
             </div>
           </div>
 
@@ -128,9 +257,13 @@
               <h6 class="mb-0">Good Receipt Note</h6>
             </div>
 
-             <div class="col-3">
+            <div class="col-3">
               <p class="mb-0">Checking Method</p>
-              <h6 class="mb-0"><span *ngIf="form2.value.method === 'Multi-Test'">{{form2.value.sampleCount}} |&nbsp;</span>{{ form2.value.method }}</h6>
+              <h6 class="mb-0">
+                <span *ngIf="form2.value.method === 'Multi-Test'"
+                  >{{ form2.value.sampleCount }} |&nbsp;</span
+                >{{ form2.value.method }}
+              </h6>
             </div>
           </div>
         </div>
@@ -221,6 +354,7 @@
                   >
                   </app-input-field>
                 </td>
+
                 <td
                   [ngClass]="
                     !disableMax(item.value.parameterId) &&
@@ -239,6 +373,7 @@
                   </app-input-field>
                 </td>
                 <td
+                  *ngIf="!getDrop(item.value.parameterId)"
                   [ngClass]="
                     !disableStd(item.value.parameterId) &&
                     (item.value.stdValue === '' || !item.controls.stdValue)
@@ -254,6 +389,26 @@
                     [readonly]="disableStd(item.value.parameterId)"
                   >
                   </app-input-field>
+                </td>
+
+                <td
+                  *ngIf="getDrop(item.value.parameterId)"
+                  [ngClass]="
+                    !disableStd(item.value.parameterId) &&
+                    (item.value.stdValue === '' || !item.controls.stdValue)
+                      ? 'bg-danger'
+                      : ''
+                  "
+                >
+                  <app-dropdown-field
+                    [control]="item.controls.stdValue"
+                    inputId="stdValue"
+                    placeHolder="standard value"
+                    [isSubmit]="isSubmit"
+                    [readonly]="disableStd(item.value.parameterId)"
+                    [options]="booleanDrops"
+                  >
+                  </app-dropdown-field>
                 </td>
 
                 <td>
@@ -321,9 +476,13 @@
               <h6 class="mb-0">Good Receipt Note</h6>
             </div>
 
-              <div class="col-3">
+            <div class="col-3">
               <p class="mb-0">Checking Method</p>
-              <h6 class="mb-0"><span *ngIf="form2.value.method === 'Multi-Test'">{{form2.value.sampleCount}} |&nbsp;</span>{{ form2.value.method }}</h6>
+              <h6 class="mb-0">
+                <span *ngIf="form2.value.method === 'Multi-Test'"
+                  >{{ form2.value.sampleCount }} |&nbsp;</span
+                >{{ form2.value.method }}
+              </h6>
             </div>
           </div>
         </div>
