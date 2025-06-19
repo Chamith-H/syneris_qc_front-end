@@ -72,7 +72,7 @@
 .full-page {
   height: 100vh;
   width: 100%;
-  background-image: url(../../../../assets/images/loginBackground.jpg);
+  background-image: url(../../../../assets/images/loginBackground.webp);
   background-size: cover;
 }
 
@@ -87,4 +87,8 @@
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.216);
+}
+
+.text-grey {
+  color: rgb(160, 160, 160);
 }

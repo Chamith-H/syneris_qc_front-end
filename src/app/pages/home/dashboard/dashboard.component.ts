@@ -120,7 +120,7 @@ export class DashboardComponent {
     this.emailSentBarChart.series = [
       {
         name: "Good Receipt Note",
-        data: [44, 55, 41, 67, 22, 43, 36, 0, 0, 0, 0, 0, 0],
+        data: [44, 55, 41, 67, 22, 43, 0, 0, 0, 0, 0, 0],
       },
       {
         name: "Inventory Transfer",
