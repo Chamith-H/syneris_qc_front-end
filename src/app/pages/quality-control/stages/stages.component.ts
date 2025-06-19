@@ -55,6 +55,7 @@ export class StagesComponent {
     this.modalRef = this.modalService.show(RelationSetterComponent, {
       initialState: {
         mode: Behavior.CREATE_MODE,
+        stage: this.selectedStage,
       },
       backdrop: "static",
 
@@ -67,10 +68,10 @@ export class StagesComponent {
 
     this.modalRef.content.closePopupAndReload.subscribe(() => {
       this.modalRef.hide();
-      // this.getData(
-      //   this.filterTable.paginationItems.currentPage,
-      //   this.filterData
-      // );
+      this.getData(
+        this.filterTable.paginationItems.currentPage,
+        this.filterData
+      );
     });
   }
 
@@ -180,7 +181,9 @@ export class StagesComponent {
   getData(page: number, filter: any) {
     this.isLoading = true;
 
-    this.stageService.getAll(page, filter).subscribe({
+    let convertedFilter = { stageName: this.selectedStage, ...filter };
+
+    this.stageService.getAll(page, convertedFilter).subscribe({
       next: (res) => {
         this.filterTable.paginationItems.currentPage = res.currentPage;
         this.filterTable.paginationItems.pageCount = res.pageCount;
@@ -221,6 +224,11 @@ export class StagesComponent {
     // this.filterData.code = "";
     // this.filterData.name = "";
     this.getData(1, {});
+  }
+
+  setStage(stage: string) {
+    this.selectedStage = stage;
+    this.getData(1, this.filterData);
   }
 
   ngOnInit() {

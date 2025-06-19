@@ -23,6 +23,7 @@ import { SuccessMessage } from "src/app/core/services/shared/success-message.ser
 export class RelationSetterComponent {
   @Input() mode: Behavior.CREATE_MODE;
   @Input() data: any;
+  @Input() stage: string;
 
   @Output() closePopup = new EventEmitter<any>();
   @Output() closePopupAndReload = new EventEmitter<any>();
@@ -388,7 +389,7 @@ export class RelationSetterComponent {
 
   saveData() {
     const body = {
-      stage: "GRN",
+      stage: this.stage,
       ...this.form2.value,
       parameterLines: this.form3.value.DocumentLines,
     };

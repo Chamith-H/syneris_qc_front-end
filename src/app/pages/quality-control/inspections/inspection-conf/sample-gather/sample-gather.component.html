@@ -89,7 +89,7 @@
                   <td *ngFor="let col of sampleCols">
                     <input
                       *ngIf="!checkIsDrop(rowGroup)"
-                      class="table-input-x"
+                      class="form-control"
                       type="text"
                       placeholder="Enter observed value"
                       [formControl]="
@@ -129,9 +129,9 @@
       </div>
       <div class="d-flex justify-content-end mt-2">
         <button (click)="submit()" class="btn btn-primary">
-          <span *ngIf="!isSampling">Save & Start Inspection</span>
+          <span *ngIf="!isSampling">Save</span>
           <span *ngIf="isSampling"
-            >Starting QC-Inspection&nbsp;
+            >Saving&nbsp;
             <i
               class="bx bx-loader bx-spin align-middle ms-1 fs-4 text-white"
             ></i

@@ -7,19 +7,19 @@
 .form-seperater-line {
   border-bottom-style: solid;
   border-width: 1px;
-  border-color: #293dbe63;
+  border-color: #0a718566;
 }
 
 .form-seperater-line p {
   font-size: 14px;
   font-weight: 500;
-  color: #293dbec2;
+  color: #0a7085;
 }
 
 .purchase-order-title {
   font-size: 14px;
   font-weight: 500;
-  color: #293dbec2;
+  color: #0a7085;
 }
 
 .purchase-order-des {
@@ -110,18 +110,15 @@
 .custom-header {
   border-style: none;
   border-radius: 4px;
-  background-color: rgb(239, 240, 248);
-  border-style: solid;
-  border-width: 1px;
-  border-color: #293dbe41;
+  background-color: #0a7086;
 }
 
 .custom-header p {
-  color: #767676;
+  color: #ffffffc9;
 }
 
 .custom-header h6 {
-  color: #000000;
+  color: #ffffff;
 }
 
 .custom-table {
@@ -129,17 +126,14 @@
 }
 
 .item-table-th {
-  background-color: rgba(50, 69, 190, 0.077);
   color: rgb(0, 0, 0);
   font-weight: 500;
 }
 
-.td-spe {
-  background-color: rgba(38, 50, 125, 0.838);
-  color: rgb(255, 255, 255);
-  font-weight: 500;
+.gate-id {
+  color: rgb(0, 0, 0);
 }
 
-.gate-id {
-  color: rgb(38, 51, 131);
+.custom-header h1 {
+  color: #ffffff;
 }

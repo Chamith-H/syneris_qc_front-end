@@ -47,9 +47,9 @@ export class InspectionsComponent {
 
   filterData = {
     stage: "GRN",
-    baseDoc: "",
-    itemCode: "",
-    approval: "",
+    DocNum: "",
+    ItemCode: "",
+    U_Approval: "",
   };
 
   filterTable = {
@@ -75,24 +75,24 @@ export class InspectionsComponent {
         {
           type: FilterType.INPUT,
           label: "Base Document",
-          name: "baseDocument",
+          name: "DocNum",
           placeholder: "Enter item name",
-          value: this.filterData.baseDoc,
+          value: this.filterData.DocNum,
         },
         {
           type: FilterType.INPUT,
           label: "Item Code",
-          name: "itemCode",
+          name: "ItemCode",
           placeholder: "Enter item code",
-          value: this.filterData.itemCode,
+          value: this.filterData.ItemCode,
         },
 
         {
           type: FilterType.DROPDOWN,
           label: "Approval Status",
-          name: "status",
+          name: "U_Approval",
           placeholder: "Select approval status",
-          value: this.filterData.approval,
+          value: this.filterData.U_Approval,
           drops: [
             {
               name: "Open",
@@ -135,11 +135,11 @@ export class InspectionsComponent {
           filter: false,
         },
         {
-          name: "Checking Round",
+          name: "Item Code",
           filter: false,
         },
         {
-          name: "Item Code",
+          name: "Batch",
           filter: false,
         },
         {
@@ -169,11 +169,11 @@ export class InspectionsComponent {
         },
         {
           type: EvalType.TEXT,
-          value: ["U_Round"],
+          value: ["ItemCode"],
         },
         {
           type: EvalType.TEXT,
-          value: ["ItemCode"],
+          value: ["Batch"],
         },
         {
           type: EvalType.TEXT,
