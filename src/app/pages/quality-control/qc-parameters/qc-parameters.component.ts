@@ -13,6 +13,8 @@ import {
 } from "src/app/core/enums/shared-enums/filter-table.enum";
 import { QcParameterService } from "src/app/core/services/app-services/quality-control/qc-parameter.service";
 import { TAction } from "src/app/core/models/shared/filter-table.model";
+import { sMsg } from "src/app/core/models/shared/success-response.model";
+import { SuccessMessage } from "src/app/core/services/shared/success-message.service";
 
 @Component({
   selector: "app-qc-parameters",
@@ -47,7 +49,8 @@ export class QcParametersComponent {
 
   constructor(
     private modalService: BsModalService,
-    private qcParameterService: QcParameterService
+    private qcParameterService: QcParameterService,
+    private successMessage: SuccessMessage
   ) {}
 
   createRecord() {
@@ -73,6 +76,33 @@ export class QcParametersComponent {
     });
   }
 
+  editRecord(id: string, data: any) {
+    this.modalRef = this.modalService.show(ParametersFormComponent, {
+      initialState: {
+        mode: Behavior.EDIT_MODE,
+        id: id,
+        data: data,
+      },
+      backdrop: "static",
+
+      class: "modal-xl modal-dialog-centered",
+    });
+
+    this.modalRef.content.closePopup.subscribe(() => {
+      this.modalRef.hide();
+    });
+
+    this.modalRef.content.closePopupAndReload.subscribe(() => {
+      this.modalRef.hide();
+      this.getData(
+        this.filterTable.paginationItems.currentPage,
+        this.filterData
+      );
+    });
+  }
+
+  viewRecord(id: string, data: any) {}
+
   filterData = {
     code: "",
     name: "",
@@ -85,21 +115,71 @@ export class QcParametersComponent {
     //!->>
     filters: {
       show: true,
-      buttonCol: "col-6 d-flex align-items-end justify-content-end",
+      buttonCol: "col-12 d-flex align-items-end justify-content-end",
       options: [
         {
           type: FilterType.INPUT,
           label: "Parameter Code",
-          name: "ParameterCode",
+          name: "code",
           placeholder: "Enter parameter code",
           value: this.filterData.code,
         },
         {
           type: FilterType.INPUT,
           label: "Parameter Name",
-          name: "ParameterName",
+          name: "name",
           placeholder: "Enter parameter name",
           value: this.filterData.code,
+        },
+        {
+          type: FilterType.DROPDOWN,
+          label: "Parameter Category",
+          name: "category",
+          placeholder: "Select parameter category",
+          value: this.filterData.category,
+          drops: [
+            {
+              name: "Fixed",
+              _id: "Fixed",
+            },
+            {
+              name: "Range",
+              _id: "Range",
+            },
+            {
+              name: "Grater-Than",
+              _id: "Grater-Than",
+            },
+            {
+              name: "Less-Than",
+              _id: "Less-Than",
+            },
+          ],
+        },
+        {
+          type: FilterType.DROPDOWN,
+          label: "Parameter Type",
+          name: "type",
+          placeholder: "Select parameter type",
+          value: this.filterData.type,
+          drops: [
+            {
+              name: "Numeric",
+              _id: "Numeric",
+            },
+            {
+              name: "Non-Numeric",
+              _id: "Non-Numeric",
+            },
+            {
+              name: "Percentage",
+              _id: "Percentage",
+            },
+            {
+              name: "Boolean",
+              _id: "Boolean",
+            },
+          ],
         },
       ],
     },
@@ -164,10 +244,10 @@ export class QcParametersComponent {
 
       actions: {
         show: true,
-        target: "UOM",
+        target: "QC Parameter",
         options: {
           detail: {
-            status: true,
+            status: !true,
             permission: fPermissions.DETAIL_ROLE,
           },
           edit: {
@@ -220,7 +300,22 @@ export class QcParametersComponent {
     if (option.action === "detail") {
       // this.viewItem(option.data);
     } else if (option.action === "edit") {
-      // this.editItem(option.data);
+      this.editRecord(option.id, option.data);
+    } else if (option.action === "delete") {
+      this.isLoading = true;
+      this.qcParameterService.deleteQcParameter(option.id).subscribe({
+        next: (res: sMsg) => {
+          this.successMessage.show(res.message);
+          this.getData(
+            this.filterTable.paginationItems.currentPage,
+            this.filterData
+          );
+        },
+        error: (err) => {
+          console.log(err);
+          this.isLoading = false;
+        },
+      });
     }
   }
 

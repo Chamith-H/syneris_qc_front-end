@@ -12,7 +12,8 @@ import { SuccessMessage } from "src/app/core/services/shared/success-message.ser
   styleUrls: ["./uom-form.component.scss"],
 })
 export class UomFormComponent {
-  @Input() mode: Behavior.CREATE_MODE;
+  @Input() mode = Behavior.CREATE_MODE;
+  @Input() id: string;
   @Input() data: any;
 
   @Output() closePopup = new EventEmitter<any>();
@@ -59,8 +60,28 @@ export class UomFormComponent {
       });
     } else {
       // Editing
+      this.qcParameterService.editUom(this.id, this.dataForm.value).subscribe({
+        next: (data: sMsg) => {
+          this.isSaving = false;
+          this.successMessage.show(data.message);
+          this.closePopupAndReload.emit();
+        },
+        error: (err) => {
+          console.log(err);
+          this.isSaving = false;
+        },
+      });
     }
   }
 
   onReset() {}
+
+  ngOnInit() {
+    if (this.mode === Behavior.EDIT_MODE && this.data) {
+      this.dataForm.patchValue({
+        name: this.data.name,
+        code: this.data.code,
+      });
+    }
+  }
 }

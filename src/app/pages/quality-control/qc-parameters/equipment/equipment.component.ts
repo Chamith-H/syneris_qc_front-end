@@ -9,6 +9,8 @@ import { fPermissions } from "src/app/core/enums/system-enums/permission.enum";
 import { QcParameterService } from "src/app/core/services/app-services/quality-control/qc-parameter.service";
 import { TAction } from "src/app/core/models/shared/filter-table.model";
 import { EquipmentFormComponent } from "./equipment-form/equipment-form.component";
+import { sMsg } from "src/app/core/models/shared/success-response.model";
+import { SuccessMessage } from "src/app/core/services/shared/success-message.service";
 
 @Component({
   selector: "app-equipment",
@@ -26,13 +28,39 @@ export class EquipmentComponent {
 
   constructor(
     private modalService: BsModalService,
-    private qcParameterService: QcParameterService
+    private qcParameterService: QcParameterService,
+    private successMessage: SuccessMessage
   ) {}
 
   create() {
     this.modalRef = this.modalService.show(EquipmentFormComponent, {
       initialState: {
         mode: Behavior.CREATE_MODE,
+      },
+      backdrop: "static",
+
+      class: "modal-md modal-dialog-centered",
+    });
+
+    this.modalRef.content.closePopup.subscribe(() => {
+      this.modalRef.hide();
+    });
+
+    this.modalRef.content.closePopupAndReload.subscribe(() => {
+      this.modalRef.hide();
+      this.getData(
+        this.filterTable.paginationItems.currentPage,
+        this.filterData
+      );
+    });
+  }
+
+  edit(id: string, data: any) {
+    this.modalRef = this.modalService.show(EquipmentFormComponent, {
+      initialState: {
+        mode: Behavior.EDIT_MODE,
+        id: id,
+        data: data,
       },
       backdrop: "static",
 
@@ -109,9 +137,9 @@ export class EquipmentComponent {
 
       actions: {
         show: true,
-        target: "UOM",
+        target: "Equipment",
         options: {
-          detail: {
+          delete: {
             status: true,
             permission: fPermissions.DETAIL_ROLE,
           },
@@ -158,10 +186,22 @@ export class EquipmentComponent {
   }
 
   async do_TableAction(option: TAction) {
-    if (option.action === "detail") {
-      // this.viewItem(option.data);
+    if (option.action === "delete") {
+      this.isLoading = true;
+      this.qcParameterService.deletEquipment(option.id).subscribe({
+        next: (data: sMsg) => {
+          this.successMessage.show(data.message);
+          this.getData(
+            this.filterTable.paginationItems.currentPage,
+            this.filterData
+          );
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
     } else if (option.action === "edit") {
-      // this.editItem(option.data);
+      this.edit(option.id, option.data);
     }
   }
 

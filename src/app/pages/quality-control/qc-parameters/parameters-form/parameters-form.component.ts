@@ -15,7 +15,8 @@ import { sMsg } from "src/app/core/models/shared/success-response.model";
   styleUrls: ["./parameters-form.component.scss"],
 })
 export class ParametersFormComponent {
-  @Input() mode: Behavior.CREATE_MODE;
+  @Input() mode = Behavior.CREATE_MODE;
+  @Input() id: string;
   @Input() data: any;
 
   @Output() closePopup = new EventEmitter<any>();
@@ -192,6 +193,19 @@ export class ParametersFormComponent {
       });
     } else {
       // Editing
+      this.qcParameterService
+        .editQcParameter(this.id, this.dataForm.value)
+        .subscribe({
+          next: (data: sMsg) => {
+            this.isSaving = false;
+            this.successMessage.show(data.message);
+            this.closePopupAndReload.emit();
+          },
+          error: (err) => {
+            console.log(err);
+            this.isSaving = false;
+          },
+        });
     }
   }
 
@@ -200,5 +214,17 @@ export class ParametersFormComponent {
   ngOnInit() {
     this.getUoms();
     this.getEquipments();
+
+    if (this.mode === Behavior.EDIT_MODE) {
+      this.dataForm.patchValue({
+        name: this.data.name,
+        code: this.data.code,
+        uom: this.data.uom?._id,
+        equipment: this.data.equipment?._id,
+        category: this.data.category,
+        type: this.data.type,
+      });
+      this.changeCategory();
+    }
   }
 }

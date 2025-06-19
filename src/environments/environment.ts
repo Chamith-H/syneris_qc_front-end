@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   defaultauth: "fackbackend",
-  apiUrl: "https://synerisqcback-end-production.up.railway.app",
+  apiUrl: "http://127.0.0.1:9503",
 };
 
 /*

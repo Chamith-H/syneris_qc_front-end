@@ -25,6 +25,14 @@ export class QcParameterService {
     return this.http.post(this.baseUrl + "/create-uom", data);
   }
 
+  editUom(id: string, data: any): Observable<any> {
+    return this.http.put(this.baseUrl + "/update-uom/" + id, data);
+  }
+
+  deleteUom(id: string): Observable<any> {
+    return this.http.delete(this.baseUrl + "/delete-uom/" + id);
+  }
+
   dropdownUom(): Observable<any> {
     return this.http.get(this.baseUrl + "/uom-dropdown");
   }
@@ -40,6 +48,14 @@ export class QcParameterService {
 
   createEquipment(data: any): Observable<any> {
     return this.http.post(this.baseUrl + "/create-equipment", data);
+  }
+
+  editEquipment(id: string, data: any): Observable<any> {
+    return this.http.put(this.baseUrl + "/update-equipment/" + id, data);
+  }
+
+  deletEquipment(id: string): Observable<any> {
+    return this.http.delete(this.baseUrl + "/delete-equipment/" + id);
   }
 
   dropdownEquipment(): Observable<any> {
@@ -59,7 +75,15 @@ export class QcParameterService {
     return this.http.post(this.baseUrl + "/create-parameter", data);
   }
 
+  editQcParameter(id: string, data: any): Observable<any> {
+    return this.http.put(this.baseUrl + "/update-parameter/" + id, data);
+  }
+
   dropdownParameter(): Observable<any> {
     return this.http.get(this.baseUrl + "/parameter-dropdown");
+  }
+
+  deleteQcParameter(id: string): Observable<any> {
+    return this.http.delete(this.baseUrl + "/delete-parameter/" + id);
   }
 }
