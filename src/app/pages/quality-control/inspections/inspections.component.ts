@@ -295,7 +295,7 @@ export class InspectionsComponent {
       this.modalRef = this.modalService.show(InspectionViewComponent, {
         initialState: {
           data: option.data,
-          stage: "GRN",
+          stage: option.data.stage,
         },
         backdrop: "static",
 
@@ -317,7 +317,7 @@ export class InspectionsComponent {
       this.modalRef = this.modalService.show(InspectionConfComponent, {
         initialState: {
           data: option.data,
-          stage: "GRN",
+          stage: option.data.stage,
         },
         backdrop: "static",
 

@@ -338,8 +338,11 @@ export class InspectionConfComponent {
         itemCode: this.data.ItemCode,
       };
 
+      console.log(body, "Consoling");
+
       this.inspectionService.startConf(body).subscribe({
         next: (data: any) => {
+          console.log(data, "Received");
           this.loadingOpend = false;
           this.form2.patchValue(data);
         },
@@ -354,7 +357,7 @@ export class InspectionConfComponent {
       this.loadingItems = true;
 
       const body = {
-        stageName: "GRN",
+        stageName: this.stage,
         docNum: this.data.DocNum,
         itemCode: this.data.ItemCode,
         round: this.data.U_Round,
