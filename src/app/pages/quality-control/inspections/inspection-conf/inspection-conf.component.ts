@@ -130,7 +130,7 @@ export class InspectionConfComponent {
     this.isStarting = true;
 
     const body = {
-      stageName: "GRN",
+      stageName: this.data.stage,
       docNum: this.data.DocNum,
       itemCode: this.data.ItemCode,
       line: this.data.Line,

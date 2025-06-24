@@ -113,11 +113,11 @@ export class EquipmentComponent {
     tableItems: {
       tHeads: [
         {
-          name: "UOM Code",
+          name: "Equipment Code",
           filter: false,
         },
         {
-          name: "UOM Name",
+          name: "Equipment Name",
           filter: false,
         },
       ],

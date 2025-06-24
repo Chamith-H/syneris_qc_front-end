@@ -63,7 +63,9 @@
             <tbody>
               <tr *ngFor="let row of parameterData">
                 <td class="sticky-col">{{ row.parameter.name }}</td>
-                <td class="sticky-col">{{ row.parameter.uom.name }}</td>
+                <td class="sticky-col">
+                  {{ row.parameter.uom.name }} ({{ row.parameter.uom.code }})
+                </td>
                 <td class="sticky-col co-s">
                   {{
                     valueFetcher(
