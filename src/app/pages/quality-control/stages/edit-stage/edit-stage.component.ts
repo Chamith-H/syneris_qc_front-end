@@ -1,40 +1,23 @@
-import { CdkStepper } from "@angular/cdk/stepper";
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-} from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ToastrService } from "ngx-toastr";
-import { Behavior } from "src/app/core/enums/shared-enums/behavior.enum";
 import { sMsg } from "src/app/core/models/shared/success-response.model";
-import { EligibleService } from "src/app/core/services/app-services/quality-control/eligible.service";
 import { QcParameterService } from "src/app/core/services/app-services/quality-control/qc-parameter.service";
 import { StageService } from "src/app/core/services/app-services/quality-control/stage.service";
 import { SuccessMessage } from "src/app/core/services/shared/success-message.service";
 
 @Component({
-  selector: "app-relation-setter",
-  templateUrl: "./relation-setter.component.html",
-  styleUrls: ["./relation-setter.component.scss"],
+  selector: "app-edit-stage",
+  templateUrl: "./edit-stage.component.html",
+  styleUrls: ["./edit-stage.component.scss"],
 })
-export class RelationSetterComponent {
-  @Input() mode: Behavior.CREATE_MODE;
-  @Input() data: any;
-  @Input() stage: string;
+export class EditStageComponent {
+  @Input() id: string = "";
+  @Input() stage: string = "";
+  @Input() itemCode: string = "";
 
   @Output() closePopup = new EventEmitter<any>();
   @Output() closePopupAndReload = new EventEmitter<any>();
-
-  @ViewChild(CdkStepper) stepper!: CdkStepper;
-  index: number = 0;
-
-  form2: FormGroup;
-  isSubmit_form2: boolean = false;
-  submittingForm_form2: boolean = false;
-  complete_form2: boolean = false;
 
   form3: FormGroup;
   isSubmit_form3: boolean = false;
@@ -68,28 +51,13 @@ export class RelationSetterComponent {
     public toastr: ToastrService,
     private successMessage: SuccessMessage,
     private stageService: StageService,
-    private qcParameterService: QcParameterService,
-    private eligibleService: EligibleService
+    private qcParameterService: QcParameterService
   ) {
-    this.form2 = this.fb.group({
-      itemCode: [null, [Validators.required]],
-      method: ["Single-Test", [Validators.required]],
-      sampleCount: [1, [Validators.required]],
-    });
-
     this.form3 = this.fb.group({
+      method: [null, [Validators.required]],
+      sampleCount: [null, [Validators.required]],
       DocumentLines: this.createitemList(),
     });
-  }
-
-  changeMethod() {
-    const method = this.form2.value.method;
-
-    if (method === "Single-Test") {
-      this.form2.get("sampleCount").setValue(1);
-    } else {
-      this.form2.get("sampleCount").setValue(2);
-    }
   }
 
   createitemList(): FormArray {
@@ -97,6 +65,7 @@ export class RelationSetterComponent {
   }
 
   createItemRow(
+    relationId: string,
     parameterId: string,
     mandatory: boolean,
     minValue: string,
@@ -105,6 +74,7 @@ export class RelationSetterComponent {
     status: boolean
   ): FormGroup {
     return this.fb.group({
+      relationId: [relationId],
       parameterId: [parameterId, [Validators.required]],
       mandatory: [mandatory],
       minValue: [minValue],
@@ -117,11 +87,6 @@ export class RelationSetterComponent {
   get itemList(): FormArray {
     return this.form3.get("DocumentLines") as FormArray;
   }
-
-  itemData: any[] = [];
-  isItemDataLoading: boolean = false;
-
-  changeItem() {}
 
   getDrop(parameterId: string) {
     if (!parameterId) {
@@ -188,26 +153,7 @@ export class RelationSetterComponent {
   }
 
   createRow() {
-    this.itemList.push(this.createItemRow(null, false, "", "", "", true));
-  }
-
-  getItemName(itemCode: string) {
-    const item = this.itemData.find(
-      (i_data: any) => i_data.ItemCode === itemCode
-    );
-
-    return item.ItemName;
-  }
-
-  submit_form2() {
-    this.isSubmit_form2 = true;
-
-    if (this.form2.invalid) {
-      this.toastr.error("Please select a item code!");
-      return;
-    } else {
-      this.stepper.next();
-    }
+    this.itemList.push(this.createItemRow(null, null, false, "", "", "", true));
   }
 
   disableMin(parameterId: string) {
@@ -264,83 +210,46 @@ export class RelationSetterComponent {
     }
   }
 
-  submit_form3() {
-    this.isSubmit_form3 = true;
-
-    if (this.form3.invalid) {
-      this.toastr.error("Please select a parameter!");
-      return;
-    } else {
-      if (this.itemList.controls.length === 0) {
-        this.toastr.error("Please add at least one parameter row!");
-        return;
-      } else {
-        const error1 = this.itemList.value.find(
-          (item: any) =>
-            this.getParamDataCategory(item.parameterId) === "Range" &&
-            (item.minValue === "" || item.maxValue === "")
-        );
-
-        if (error1) {
-          this.toastr.error("Please fill all red color fields!");
-          return;
-        }
-
-        const error2 = this.itemList.value.find(
-          (item: any) =>
-            item.minValue === "" && item.maxValue === "" && item.stdValue === ""
-        );
-
-        if (error2) {
-          this.toastr.error("Please fill all red color fields!");
-          return;
-        } else {
-          this.stepper.next();
-        }
-      }
-    }
-  }
-
-  filterOptions = {
-    ItemCode: "",
-    ItemName: "",
-  };
-
-  currentPage: number = 1;
-  pageCount: number = 0;
-  dataCount: number = 0;
-
-  //!--> Get user roles list.....................................................................|
-  getItems(page: number, filter: any) {
-    this.isItemDataLoading = true;
-
-    this.eligibleService.getAll(page, filter).subscribe({
-      next: (res) => {
-        this.currentPage = res.currentPage;
-        this.pageCount = res.pageCount;
-        this.dataCount = res.dataCount;
-
-        this.itemData = res.data;
-        this.isItemDataLoading = false;
-      },
-      error: (err) => {
-        console.log(err);
-        this.isItemDataLoading = false;
-      },
-    });
-  }
-
-  changePage(page: number) {
-    this.getItems(page, this.filterOptions);
-  }
-
   getParameters() {
     this.loadingParameters = true;
 
     this.qcParameterService.dropdownParameter().subscribe({
       next: (data: any[]) => {
-        this.loadingParameters = false;
         this.parameters = data;
+
+        this.stageService
+          .createStagedParameters({
+            stage: this.stage,
+            itemCode: this.itemCode,
+          })
+          .subscribe({
+            next: (res: any) => {
+              this.loadingParameters = false;
+
+              this.form3.patchValue({
+                method: res.head.method,
+                sampleCount: res.head.sampleCount,
+              });
+
+              const relationMapper = res.relations.map((relation: any) => {
+                this.itemList.push(
+                  this.createItemRow(
+                    relation._id,
+                    relation.parameter,
+                    relation.mandatory,
+                    relation.minValue,
+                    relation.maxValue,
+                    relation.stdValue,
+                    relation.status
+                  )
+                );
+              });
+            },
+            error: (err) => {
+              console.log(err);
+              this.loadingParameters = false;
+            },
+          });
       },
       error: (err) => {
         console.log(err);
@@ -385,67 +294,81 @@ export class RelationSetterComponent {
     }
   }
 
- deleteRow(index: number): void {
-  this.itemList.removeAt(index);
-}
+  deleteRow(index: number): void {
+    this.itemList.removeAt(index);
+  }
+
+  changeMethod() {
+    const method = this.form3.value.method;
+
+    if (method === "Single-Test") {
+      this.form3.get("sampleCount").setValue(1);
+    } else {
+      this.form3.get("sampleCount").setValue(2);
+    }
+  }
 
   isSaving: boolean = false;
 
-  saveData() {
-    const body = {
-      stage: this.stage,
-      ...this.form2.value,
-      parameterLines: this.form3.value.DocumentLines,
-    };
+  onReset() {}
 
-    this.isSaving = true;
+  submit_form3() {
+    this.isSubmit_form3 = true;
 
-    this.stageService.createItemParameter(body).subscribe({
-      next: (data: sMsg) => {
-        this.isSaving = false;
-        this.successMessage.show(data.message);
-        this.closePopupAndReload.emit();
-      },
-      error: (err) => {
-        console.log(err);
-        this.isSaving = false;
-      },
-    });
-  }
-
-  form2Completer() {
-    if (this.itemList.controls.length === 0) {
-      return false;
+    if (this.form3.invalid) {
+      this.toastr.error("Please select a parameter!");
+      return;
     } else {
-      const error1 = this.itemList.value.find(
-        (item: any) =>
-          this.getParamDataCategory(item.parameterId) === "Range" &&
-          (item.minValue === "" || item.maxValue === "")
-      );
-
-      if (error1) {
-        return false;
-      }
-
-      const error2 = this.itemList.value.find(
-        (item: any) =>
-          item.minValue === "" && item.maxValue === "" && item.stdValue === ""
-      );
-
-      if (error2) {
-        return false;
+      if (this.itemList.controls.length === 0) {
+        this.toastr.error("Please fill the form correctly!");
+        return;
       } else {
-        return true;
+        const error1 = this.itemList.value.find(
+          (item: any) =>
+            this.getParamDataCategory(item.parameterId) === "Range" &&
+            (item.minValue === "" || item.maxValue === "")
+        );
+
+        if (error1) {
+          this.toastr.error("Please fill all grey color fields!");
+          return;
+        }
+
+        const error2 = this.itemList.value.find(
+          (item: any) =>
+            item.minValue === "" && item.maxValue === "" && item.stdValue === ""
+        );
+
+        if (error2) {
+          this.toastr.error("Please fill all grey color fields!");
+          return;
+        } else {
+          this.isSaving = true;
+
+          const body = {
+            headId: this.id,
+            stage: this.stage,
+            itemCode: this.itemCode,
+            ...this.form3.value,
+          };
+
+          this.stageService.updateParameters(body).subscribe({
+            next: (data: sMsg) => {
+              this.isSaving = false;
+              this.successMessage.show(data.message);
+              this.closePopupAndReload.emit();
+            },
+            error: (err) => {
+              console.log(err);
+              this.isSaving = false;
+            },
+          });
+        }
       }
     }
   }
 
-  clickFilter() {
-    this.getItems(1, this.filterOptions);
-  }
-
   ngOnInit() {
-    this.getItems(1, this.filterOptions);
     this.getParameters();
   }
 }

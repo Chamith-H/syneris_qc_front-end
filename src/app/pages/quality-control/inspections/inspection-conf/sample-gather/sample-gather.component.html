@@ -57,14 +57,24 @@
               <tr>
                 <th class="sticky-col">Pameter Name</th>
                 <th class="sticky-col">UOM</th>
-                <th class="sticky-col">Value (for 'X')</th>
+                <th class="sticky-col">Condition (for 'X')</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let row of parameterData">
                 <td class="sticky-col">{{ row.parameter.name }}</td>
                 <td class="sticky-col">{{ row.parameter.uom.name }}</td>
-                <td class="sticky-col co-s">{{ row.itemCode }}</td>
+                <td class="sticky-col co-s">
+                  {{
+                    valueFetcher(
+                      row.parameter.category,
+                      row.parameter.type,
+                      row.minValue,
+                      row.maxValue,
+                      row.stdValue
+                    )
+                  }}
+                </td>
               </tr>
             </tbody>
           </table>

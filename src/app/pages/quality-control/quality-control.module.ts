@@ -23,6 +23,8 @@ import { InspectionConfComponent } from "./inspections/inspection-conf/inspectio
 import { InspectionViewComponent } from "./inspections/inspection-view/inspection-view.component";
 import { SampleGatherComponent } from "./inspections/inspection-conf/sample-gather/sample-gather.component";
 import { GetActionComponent } from './inspections/inspection-conf/get-action/get-action.component';
+import { EditStageComponent } from './stages/edit-stage/edit-stage.component';
+import { ViewStageComponent } from './stages/view-stage/view-stage.component';
 
 const routes: Routes = [
   {
@@ -75,6 +77,8 @@ const routes: Routes = [
     InspectionViewComponent,
     SampleGatherComponent,
     GetActionComponent,
+    EditStageComponent,
+    ViewStageComponent,
   ],
   imports: [
     CommonModule,

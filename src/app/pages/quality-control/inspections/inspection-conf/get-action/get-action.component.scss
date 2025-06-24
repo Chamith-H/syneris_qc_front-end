@@ -14,3 +14,13 @@
 .data-aligner h6 {
   color: rgb(255, 255, 255);
 }
+
+.asst-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.asst-img img {
+  width: 100%;
+}

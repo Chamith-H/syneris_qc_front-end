@@ -15,6 +15,7 @@ import { CdkStepperModule } from "@angular/cdk/stepper";
 import { ViewPoComponent } from "./a-gate-pass-form/view-po/view-po.component";
 import { WeighBridgeComponent } from "./weigh-bridge/weigh-bridge.component";
 import { WeightRecordComponent } from './weigh-bridge/weight-record/weight-record.component';
+import { ViewWeightComponent } from './weigh-bridge/view-weight/view-weight.component';
 
 const routes: Routes = [
   //!--> Routes for users............................................|
@@ -64,6 +65,7 @@ const routes: Routes = [
     ViewPoComponent,
     WeighBridgeComponent,
     WeightRecordComponent,
+    ViewWeightComponent,
   ],
   imports: [
     CommonModule,

@@ -1,7 +1,5 @@
 .finder {
   background-color: rgb(0, 0, 0);
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
 }
 
 .finder p {
@@ -72,13 +70,6 @@
   border-color: rgb(239, 239, 239);
 }
 
-.table-body-x {
-  min-height: 300px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgb(220, 220, 220);
-}
-
 .button-delete {
   color: #ff0000;
   font-size: 13px;
@@ -86,8 +77,4 @@
 
 .button-delete:hover {
   color: #8b0000;
-}
-
-.s-width {
-  width: 90px;
 }

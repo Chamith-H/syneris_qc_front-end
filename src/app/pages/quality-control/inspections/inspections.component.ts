@@ -46,7 +46,7 @@ export class InspectionsComponent {
   };
 
   filterData = {
-    stage: "GRN",
+    stage: "",
     DocNum: "",
     ItemCode: "",
     U_Approval: "",
@@ -69,6 +69,10 @@ export class InspectionsComponent {
             {
               name: "Good Receipt Note",
               _id: "GRN",
+            },
+            {
+              name: "Inventory Transfer",
+              _id: "IVR",
             },
           ],
         },
@@ -127,6 +131,10 @@ export class InspectionsComponent {
           filter: false,
         },
         {
+          name: "Base Type",
+          filter: false,
+        },
+        {
           name: "Base Document",
           filter: false,
         },
@@ -161,6 +169,10 @@ export class InspectionsComponent {
         },
         {
           type: EvalType.TEXT,
+          value: ["stage"],
+        },
+        {
+          type: EvalType.TEXT,
           value: ["DocNum"],
         },
         {
@@ -180,8 +192,26 @@ export class InspectionsComponent {
           value: ["CreationDate"],
         },
         {
-          type: EvalType.TEXT,
+          type: EvalType.CUSTOM,
           value: ["U_Approval"],
+          options: [
+            {
+              optValue: "Open",
+              class: 1,
+            },
+            {
+              optValue: "Pending",
+              class: 4,
+            },
+            {
+              optValue: "Approved",
+              class: 2,
+            },
+            {
+              optValue: "Rejected",
+              class: 5,
+            },
+          ],
         },
       ],
 
@@ -233,7 +263,7 @@ export class InspectionsComponent {
         this.filterTable.tableItems.tDescriptions = res.data;
 
         const dataMapper = res.data.map((r_data: any) => {
-          r_data.reqNo = `INS-${r_data.DocNum}-L${r_data.Line}-R${r_data.U_Round}`;
+          r_data.reqNo = `${r_data.stage}-${r_data.DocNum}-L${r_data.Line}-R${r_data.U_Round}`;
 
           if (r_data.U_Approval === "Open" || r_data.U_Approval === "Pending") {
             r_data.showConfig = "Y";

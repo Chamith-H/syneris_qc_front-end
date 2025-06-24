@@ -197,8 +197,18 @@ export class GatePassComponent {
           value: ["createdDate"],
         },
         {
-          type: EvalType.TEXT,
+          type: EvalType.CUSTOM,
           value: ["state"],
+          options: [
+            {
+              optValue: "Draft",
+              class: 1,
+            },
+            {
+              optValue: "Completed",
+              class: 2,
+            },
+          ],
         },
       ],
 

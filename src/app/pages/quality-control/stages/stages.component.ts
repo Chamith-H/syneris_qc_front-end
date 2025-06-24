@@ -13,6 +13,10 @@ import {
 } from "src/app/core/enums/shared-enums/filter-table.enum";
 import { StageService } from "src/app/core/services/app-services/quality-control/stage.service";
 import { TAction } from "src/app/core/models/shared/filter-table.model";
+import { EditStageComponent } from "./edit-stage/edit-stage.component";
+import { ViewStageComponent } from "./view-stage/view-stage.component";
+import { sMsg } from "src/app/core/models/shared/success-response.model";
+import { SuccessMessage } from "src/app/core/services/shared/success-message.service";
 
 @Component({
   selector: "app-stages",
@@ -48,7 +52,8 @@ export class StagesComponent {
 
   constructor(
     private modalService: BsModalService,
-    private stageService: StageService
+    private stageService: StageService,
+    private successMessage: SuccessMessage
   ) {}
 
   createRelation() {
@@ -56,6 +61,56 @@ export class StagesComponent {
       initialState: {
         mode: Behavior.CREATE_MODE,
         stage: this.selectedStage,
+      },
+      backdrop: "static",
+
+      class: "modal-xl modal-dialog-centered",
+    });
+
+    this.modalRef.content.closePopup.subscribe(() => {
+      this.modalRef.hide();
+    });
+
+    this.modalRef.content.closePopupAndReload.subscribe(() => {
+      this.modalRef.hide();
+      this.getData(
+        this.filterTable.paginationItems.currentPage,
+        this.filterData
+      );
+    });
+  }
+
+  editRelation(id: string, data: any) {
+    this.modalRef = this.modalService.show(EditStageComponent, {
+      initialState: {
+        id: id,
+        stage: data.stageName,
+        itemCode: data.itemCode,
+      },
+      backdrop: "static",
+
+      class: "modal-xl modal-dialog-centered",
+    });
+
+    this.modalRef.content.closePopup.subscribe(() => {
+      this.modalRef.hide();
+    });
+
+    this.modalRef.content.closePopupAndReload.subscribe(() => {
+      this.modalRef.hide();
+      this.getData(
+        this.filterTable.paginationItems.currentPage,
+        this.filterData
+      );
+    });
+  }
+
+  viewRelation(id: string, data: any) {
+    this.modalRef = this.modalService.show(ViewStageComponent, {
+      initialState: {
+        id: id,
+        stage: data.stageName,
+        itemCode: data.itemCode,
       },
       backdrop: "static",
 
@@ -149,7 +204,7 @@ export class StagesComponent {
 
       actions: {
         show: true,
-        target: "UOM",
+        target: "item-parameter relation",
         options: {
           detail: {
             status: true,
@@ -206,9 +261,24 @@ export class StagesComponent {
 
   async do_TableAction(option: TAction) {
     if (option.action === "detail") {
-      // this.viewItem(option.data);
+      this.viewRelation(option.id, option.data);
     } else if (option.action === "edit") {
-      // this.editItem(option.data);
+      this.editRelation(option.id, option.data);
+    } else if (option.action === "delete") {
+      this.isLoading = true;
+      this.stageService.deleteStage(option.id).subscribe({
+        next: (res: sMsg) => {
+          this.successMessage.show(res.message);
+          this.getData(
+            this.filterTable.paginationItems.currentPage,
+            this.filterData
+          );
+        },
+        error: (err) => {
+          console.log(err);
+          this.isLoading = false;
+        },
+      });
     }
   }
 

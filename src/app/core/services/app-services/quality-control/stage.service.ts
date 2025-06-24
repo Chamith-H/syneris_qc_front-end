@@ -26,7 +26,15 @@ export class StageService {
     return this.http.post(this.baseUrl + "/create", data);
   }
 
-  //   updateItem(data: any): Observable<any> {
-  //     return this.http.post(this.baseUrl + "/update", data);
-  //   }
+  createStagedParameters(data: any): Observable<any> {
+    return this.http.post(this.baseUrl + "/staged-parameters", data);
+  }
+
+  updateParameters(data: any): Observable<any> {
+    return this.http.post(this.baseUrl + "/update-parameters", data);
+  }
+
+  deleteStage(id: string): Observable<any> {
+    return this.http.delete(this.baseUrl + "/remove/" + id);
+  }
 }

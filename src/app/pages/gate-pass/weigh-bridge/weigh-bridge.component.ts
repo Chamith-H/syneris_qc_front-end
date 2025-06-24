@@ -15,6 +15,7 @@ import {
 import { WeighBridgeService } from "src/app/core/services/app-services/gate-pass/weigh-bridge.service";
 import { SuccessMessage } from "src/app/core/services/shared/success-message.service";
 import { WeightRecordComponent } from "./weight-record/weight-record.component";
+import { ViewWeightComponent } from "./view-weight/view-weight.component";
 
 @Component({
   selector: "app-weigh-bridge",
@@ -159,7 +160,7 @@ export class WeighBridgeComponent {
         target: "Weigh-Bridge",
         options: {
           detail: {
-            status: !true,
+            status: true,
             permission: fPermissions.DETAIL_ROLE,
           },
           config: {
@@ -215,6 +216,21 @@ export class WeighBridgeComponent {
     });
   }
 
+  open_weightViewPopup(option: TAction) {
+    this.modalRef = this.modalService.show(ViewWeightComponent, {
+      initialState: {
+        id: option.id,
+        data: option.data,
+      },
+
+      class: "modal-lg modal-dialog-centered",
+    });
+
+    this.modalRef.content.closePopup.subscribe(() => {
+      this.modalRef.hide();
+    });
+  }
+
   //!--> Get user roles list.....................................................................|
   getRoles(page: number, filter: any) {
     this.isLoading = true;
@@ -225,6 +241,12 @@ export class WeighBridgeComponent {
         this.filterTable.paginationItems.dataCount = res.dataCount;
 
         const resMapper = res.data.map((r_data: any) => {
+          if (r_data.status === "Completed") {
+            r_data.showConfig = "N";
+          } else {
+            r_data.showConfig = "Y";
+          }
+
           if (
             r_data.firstWeight &&
             r_data.firstWeight !== "" &&
@@ -233,7 +255,7 @@ export class WeighBridgeComponent {
           ) {
             r_data.fWeight = `${r_data.firstWeight} Kg`;
             r_data.sWeight = `${r_data.secondWeight} Kg`;
-            r_data.aWeight = `${r_data.secondWeight - r_data.firstWeight} Kg`;
+            r_data.aWeight = `${r_data.firstWeight - r_data.secondWeight} Kg`;
           }
 
           if (r_data.firstWeight && r_data.firstWeight !== "") {
@@ -272,6 +294,8 @@ export class WeighBridgeComponent {
   async do_TableAction(option: TAction) {
     if (option.action === "config") {
       this.open_weightRecordPopup(option);
+    } else if (option.action === "detail") {
+      this.open_weightViewPopup(option);
     }
   }
 

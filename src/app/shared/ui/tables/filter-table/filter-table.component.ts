@@ -37,7 +37,10 @@ export class FilterTableComponent {
       }
     });
 
-    if (evalObject.type === EvalType.TEXT) {
+    if (
+      evalObject.type === EvalType.TEXT ||
+      evalObject.type === EvalType.CUSTOM
+    ) {
       return fetchedValue || "___";
     } else if (evalObject.type === EvalType.COUNT) {
       return fetchedValue.length;
@@ -85,6 +88,42 @@ export class FilterTableComponent {
         return {
           style: "BOOLEAN",
           class: "bg-danger custom-font text-white px-2 rounded-5",
+        };
+      }
+    } else if (evalObject.type === EvalType.CUSTOM) {
+      const styler = evalObject.options.find(
+        (e_option: any) => e_option.optValue === fetchedValue
+      );
+
+      if (styler.class === 1) {
+        return {
+          style: "BOOLEAN",
+          class: "bg-warning custom-font text-white px-2 rounded-5",
+        };
+      } else if (styler.class === 2) {
+        return {
+          style: "BOOLEAN",
+          class: "bg-success custom-font text-white px-2 rounded-5",
+        };
+      } else if (styler.class === 3) {
+        return {
+          style: "BOOLEAN",
+          class: "bg-primary custom-font text-white px-2 rounded-5",
+        };
+      } else if (styler.class === 4) {
+        return {
+          style: "BOOLEAN",
+          class: "bg-info custom-font text-white px-2 rounded-5",
+        };
+      } else if (styler.class === 5) {
+        return {
+          style: "BOOLEAN",
+          class: "bg-danger custom-font text-white px-2 rounded-5",
+        };
+      } else {
+        return {
+          style: "BOOLEAN",
+          class: "bg-secondary custom-font text-white px-2 rounded-5",
         };
       }
     } else if (evalObject.type === EvalType.DATE) {

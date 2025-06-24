@@ -23,4 +23,8 @@ export class WeighBridgeService {
   weightRecord(data: any): Observable<any> {
     return this.http.post(this.baseUrl + "/weight-record", data);
   }
+
+  completeTransaction(id: string): Observable<any> {
+    return this.http.get(this.baseUrl + "/complete/" + id);
+  }
 }

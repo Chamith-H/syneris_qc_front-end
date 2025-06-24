@@ -69,6 +69,42 @@ export class SampleGatherComponent {
 
   isSampling: boolean = false;
 
+  valueFetcher(
+    category: string,
+    type: string,
+    minValue: string,
+    maxValue: string,
+    stdValue: string
+  ) {
+    if (category === "Fixed") {
+      if (type === "Percentage") {
+        return `X = ${stdValue}%`;
+      } else {
+        return `X = ${stdValue}`;
+      }
+    } else if (category === "Range") {
+      if (type === "Percentage") {
+        return `${minValue}% < X < ${maxValue}%`;
+      } else {
+        return `${minValue} < X < ${maxValue}`;
+      }
+    } else if (category === "Grater-Than") {
+      if (type === "Percentage") {
+        return `${minValue}% < X`;
+      } else {
+        return `${minValue} < X`;
+      }
+    } else if (category === "Less-Than") {
+      if (type === "Percentage") {
+        return `${maxValue}% > X`;
+      } else {
+        return `${maxValue} > X`;
+      }
+    } else {
+      return `X = ${stdValue}`;
+    }
+  }
+
   submit() {
     this.isSampling = true;
 
