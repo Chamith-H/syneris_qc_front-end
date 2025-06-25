@@ -124,3 +124,25 @@ input::placeholder {
   font-size: 15px;
   color: #20c300;
 }
+
+.button-view {
+  color: #8b90a8;
+  font-size: 15px;
+}
+
+.button-delete {
+  color: #8b90a8;
+  font-size: 14px;
+}
+
+.button-view:hover {
+  color: #ffae00;
+}
+
+.button-delete:hover {
+  color: #ff0000;
+}
+
+.short-col {
+  width: 100px;
+}

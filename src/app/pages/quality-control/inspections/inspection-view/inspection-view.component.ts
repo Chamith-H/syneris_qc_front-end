@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 import { SampleGatherComponent } from "../inspection-conf/sample-gather/sample-gather.component";
 import { DateShower } from "src/app/core/services/shared/date-shower.service";
 import { GetActionComponent } from "../inspection-conf/get-action/get-action.component";
+import { supabase } from "src/app/core/services/shared/superbase.config";
+import { sMsg } from "src/app/core/models/shared/success-response.model";
 
 @Component({
   selector: "app-inspection-view",
@@ -298,6 +300,70 @@ export class InspectionViewComponent {
     });
   }
 
+  viewDocument(doc: any) {
+    const directUrl = doc.url;
+
+    const a = document.createElement("a");
+    a.href = directUrl;
+    a.download = doc.name;
+    a.click();
+  }
+
+  deleteDocument(doc: any) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You want to delete this document?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.loadingDocuments = true;
+        const filePath = doc.path;
+
+        supabase.storage
+          .from("syneris")
+          .remove(filePath)
+          .then(({ data, error }) => {
+            if (error) {
+              console.error("Delete error:", error.message);
+              return;
+            }
+
+            this.inspectionService.deleteDocuments(doc._id).subscribe({
+              next: (res: sMsg) => {
+                this.successMessage.show(res.message);
+
+                this.getDocuments();
+              },
+              error: (err) => {
+                console.error("Failed to delete document record:", err);
+              },
+            });
+          });
+      }
+    });
+  }
+
+  loadingDocuments: boolean = false;
+  documents: any[] = [];
+
+  getDocuments() {
+    this.loadingDocuments = true;
+    this.inspectionService.viewDocuments(this.data._id).subscribe({
+      next: (data: any[]) => {
+        this.loadingDocuments = false;
+        this.documents = data;
+      },
+      error: (err) => {
+        console.log(err);
+        this.loadingDocuments = false;
+      },
+    });
+  }
+
   ngOnInit() {
     if (this.data.U_Approval === "Open") {
       this.loadingOpend = true;
@@ -340,6 +406,8 @@ export class InspectionViewComponent {
           data.forEach((m_data: any) => {
             this.itemList.push(this.createItemRow(m_data));
           });
+
+          this.getDocuments();
         },
         error: (err) => {
           console.log(err);

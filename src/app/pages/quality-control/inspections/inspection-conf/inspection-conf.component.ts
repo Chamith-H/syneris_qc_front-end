@@ -9,6 +9,8 @@ import { SampleGatherComponent } from "./sample-gather/sample-gather.component";
 import { DateShower } from "src/app/core/services/shared/date-shower.service";
 import { GetActionComponent } from "./get-action/get-action.component";
 import { DocUploadComponent } from "./doc-upload/doc-upload.component";
+import { supabase } from "src/app/core/services/shared/superbase.config";
+import { sMsg } from "src/app/core/models/shared/success-response.model";
 
 @Component({
   selector: "app-inspection-conf",
@@ -58,7 +60,7 @@ export class InspectionConfComponent {
   selectedTab: number = 1;
 
   loadingDocuments: boolean = false;
-  ducuments: any[] = [];
+  documents: any[] = [];
 
   changeTab(tab: number) {
     this.selectedTab = tab;
@@ -86,6 +88,9 @@ export class InspectionConfComponent {
     this.modalRef = this.modalService.show(DocUploadComponent, {
       backdrop: "static",
       class: "modal-md modal-dialog-centered",
+      initialState: {
+        id: this.data._id,
+      },
     });
 
     this.modalRef.content.closePopup.subscribe(() => {
@@ -94,7 +99,55 @@ export class InspectionConfComponent {
 
     this.modalRef.content.closePopupAndReload.subscribe(() => {
       this.modalRef.hide();
-      this.closePopupAndReload.emit();
+
+      this.getDocuments();
+    });
+  }
+
+  viewDocument(doc: any) {
+    const directUrl = doc.url;
+
+    const a = document.createElement("a");
+    a.href = directUrl;
+    a.download = doc.name;
+    a.click();
+  }
+
+  deleteDocument(doc: any) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You want to delete this document?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.loadingDocuments = true;
+        const filePath = doc.path;
+
+        supabase.storage
+          .from("syneris")
+          .remove(filePath)
+          .then(({ data, error }) => {
+            if (error) {
+              console.error("Delete error:", error.message);
+              return;
+            }
+
+            this.inspectionService.deleteDocuments(doc._id).subscribe({
+              next: (res: sMsg) => {
+                this.successMessage.show(res.message);
+
+                this.getDocuments();
+              },
+              error: (err) => {
+                console.error("Failed to delete document record:", err);
+              },
+            });
+          });
+      }
     });
   }
 
@@ -355,6 +408,20 @@ export class InspectionConfComponent {
     });
   }
 
+  getDocuments() {
+    this.loadingDocuments = true;
+    this.inspectionService.viewDocuments(this.data._id).subscribe({
+      next: (data: any[]) => {
+        this.loadingDocuments = false;
+        this.documents = data;
+      },
+      error: (err) => {
+        console.log(err);
+        this.loadingDocuments = false;
+      },
+    });
+  }
+
   ngOnInit() {
     if (this.data.U_Approval === "Open") {
       this.loadingOpend = true;
@@ -364,11 +431,8 @@ export class InspectionConfComponent {
         itemCode: this.data.ItemCode,
       };
 
-      console.log(body, "Consoling");
-
       this.inspectionService.startConf(body).subscribe({
         next: (data: any) => {
-          console.log(data, "Received");
           this.loadingOpend = false;
           this.form2.patchValue(data);
         },
@@ -381,6 +445,7 @@ export class InspectionConfComponent {
 
     if (this.data.U_Approval === "Pending") {
       this.loadingItems = true;
+      this.loadingDocuments = true;
 
       const body = {
         stageName: this.stage,
@@ -400,6 +465,8 @@ export class InspectionConfComponent {
           data.forEach((m_data: any) => {
             this.itemList.push(this.createItemRow(m_data));
           });
+
+          this.getDocuments();
         },
         error: (err) => {
           console.log(err);

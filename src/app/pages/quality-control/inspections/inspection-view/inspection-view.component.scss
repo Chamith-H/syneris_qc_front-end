@@ -47,12 +47,12 @@
 }
 
 .width2 {
-  width: 45vw;
+  width: 40vw;
   overflow-x: auto;
 }
 
 .width1 {
-  width: 55vw;
+  width: 60vw;
 }
 
 .custom-table td {
@@ -94,4 +94,26 @@ input::placeholder {
 .sep-line p {
   width: calc(100% - 150px);
   color: #858585;
+}
+
+.button-view {
+  color: #8b90a8;
+  font-size: 15px;
+}
+
+.button-delete {
+  color: #8b90a8;
+  font-size: 14px;
+}
+
+.button-view:hover {
+  color: #ffae00;
+}
+
+.button-delete:hover {
+  color: #ff0000;
+}
+
+.short-col {
+  width: 100px;
 }

@@ -51,4 +51,16 @@ export class InspectionService {
   setAction(id: string, data: any): Observable<any> {
     return this.http.put(this.baseUrl + `/set-action/${id}`, data);
   }
+
+  viewDocuments(id: string): Observable<any> {
+    return this.http.get(this.baseUrl + `/get-doc/${id}`);
+  }
+
+  uploadDocuments(data: any): Observable<any> {
+    return this.http.post(this.baseUrl + "/upload-doc", data);
+  }
+
+  deleteDocuments(id: string): Observable<any> {
+    return this.http.delete(this.baseUrl + `/remove-doc/${id}`);
+  }
 }

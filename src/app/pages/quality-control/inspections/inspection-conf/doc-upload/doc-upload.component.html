@@ -43,10 +43,16 @@
     <div class="pt-1">
       <button
         (click)="uploadDocument()"
-        [disabled]="!finalFile"
+        [disabled]="!finalFile || isUploading"
         class="btn btn-primary w-100"
       >
-        <i class="fas fa-upload"></i>&nbsp;Upload
+        <span *ngIf="!isUploading">
+          <i class="fas fa-upload"></i>&nbsp;Upload</span
+        >
+        <span *ngIf="isUploading">
+          <i class="bx bx-loader bx-spin align-middle me-1 fs-4 text-white"></i
+          >&nbsp;Uploading
+        </span>
       </button>
     </div>
   </div>

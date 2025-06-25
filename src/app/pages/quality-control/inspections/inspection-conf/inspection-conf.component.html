@@ -132,7 +132,7 @@
       </div>
 
       <div *ngIf="selectedTab === 1">
-        <p class="mt-2 grey-txt align-g-txt">
+        <p class="mt-3 grey-txt align-g-txt">
           This section lists all the predefined Quality Control (QC) parameters
           applicable to the item being inspected. Each parameter includes its
           unit of measurement (UOM), condition to be met, and whether it is
@@ -284,8 +284,8 @@
         </form>
       </div>
 
-      <div *ngIf="selectedTab === 2">
-        <p class="mt-2 grey-txt align-g-txt">
+      <div *ngIf="selectedTab === 2" class="pb-2">
+        <p class="mt-3 grey-txt align-g-txt">
           Upload supporting documents related to this inspection, such as lab
           reports, certificates of analysis, test sheets, or visual proof.
           Ensure the documents are relevant, clearly labeled, and legible. These
@@ -307,7 +307,6 @@
               <thead class="table-light">
                 <tr>
                   <th>Document Name</th>
-                  <th>Document Type</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -320,18 +319,33 @@
                   </td>
                 </tr>
               </tbody>
-              <tbody *ngIf="!loadingDocuments && ducuments.length === 0">
+              <tbody *ngIf="!loadingDocuments && documents.length === 0">
                 <tr>
                   <td [colSpan]="3">
                     <app-no-data></app-no-data>
                   </td>
                 </tr>
               </tbody>
-              <tbody *ngIf="!loadingDocuments && ducuments.length !== 0">
-                <tr *ngFor="let doc of ducuments">
+              <tbody *ngIf="!loadingDocuments && documents.length !== 0">
+                <tr *ngFor="let doc of documents">
                   <td>{{ doc.name }}</td>
-                  <td>{{ doc.type }}</td>
-                  <!-- <td>{{}}</td> -->
+                  <td class="short-col">
+                    <div class="d-flex align-items-center">
+                      <button
+                        class="btn btn-sm button-view"
+                        (click)="viewDocument(doc)"
+                      >
+                        <i class="fas fa-cloud-download-alt"></i>
+                      </button>
+
+                      <button
+                        class="btn btn-sm button-delete"
+                        (click)="deleteDocument(doc)"
+                      >
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
