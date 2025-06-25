@@ -112,146 +112,232 @@
     </div>
 
     <div *ngIf="data.U_Approval === 'Pending'">
-      <!-- Parameter table -->
-      <form [formGroup]="form3" (ngSubmit)="submit_form3()" class="mt-3">
-        <div class="d-flex">
-          <div class="width1 table-w grey-twx">
-            <h6 class="mb-0">QC Parameters & Standard Values</h6>
+      <div class="double-tab d-flex justify-content-between mt-3">
+        <button
+          [ngClass]="
+            selectedTab === 1 ? 'Active-Tab px-0' : 'Deactive-Tab px-0'
+          "
+          (click)="changeTab(1)"
+        >
+          <i class="fas fa-atlas"></i>&nbsp;QC Parameters
+        </button>
+        <button
+          [ngClass]="
+            selectedTab === 2 ? 'Active-Tab px-0' : 'Deactive-Tab px-0'
+          "
+          (click)="changeTab(2)"
+        >
+          <i class="fas fa-file-pdf"></i>&nbsp;Related Documents
+        </button>
+      </div>
+
+      <div *ngIf="selectedTab === 1">
+        <p class="mt-2 grey-txt align-g-txt">
+          This section lists all the predefined Quality Control (QC) parameters
+          applicable to the item being inspected. Each parameter includes its
+          unit of measurement (UOM), condition to be met, and whether it is
+          mandatory. Observed values must be entered for each sample based on
+          actual inspection results. Ensure all mandatory fields are completed
+          before submitting the inspection for approval or rejection.
+        </p>
+        <form [formGroup]="form3" (ngSubmit)="submit_form3()" class="mt-3">
+          <div class="d-flex">
+            <div class="width1 table-w grey-twx">
+              <h6 class="mb-0">QC Parameters & Standard Values</h6>
+            </div>
+            <div class="width2 table-w grey-twx">
+              <h6 class="mb-0">Observed Values For Samples</h6>
+            </div>
           </div>
-          <div class="width2 table-w grey-twx">
-            <h6 class="mb-0">Observed Values For Samples</h6>
+          <div class="d-flex">
+            <div [ngClass]="loadingItems ? 'w-100' : 'width1'">
+              <table
+                class="table table-sm table-bordered align-middle custom-table"
+              >
+                <thead class="table-light">
+                  <tr>
+                    <th>Parameter</th>
+                    <th>UOM</th>
+                    <th>Type</th>
+                    <th>Mandatory</th>
+                    <th>Condition (for 'X')</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="loadingItems">
+                  <tr>
+                    <td [colSpan]="5">
+                      <div class="my-5 py-5">
+                        <app-content-loader></app-content-loader>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody *ngIf="!loadingItems && itemList.controls.length === 0">
+                  <tr>
+                    <td [colSpan]="5">
+                      <app-no-data></app-no-data>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody formArrayName="DocumentLines">
+                  <tr
+                    *ngFor="let row of itemList.controls; let rowIndex = index"
+                    [formGroupName]="rowIndex"
+                  >
+                    <td>{{ row.value.parameterName }}</td>
+                    <td>{{ row.value.uom }}</td>
+                    <td>{{ row.value.type }} - {{ row.value.category }}</td>
+                    <td>
+                      <span *ngIf="!row.value.mandatory" class="text-secondary"
+                        ><i class="far fa-times-circle"></i
+                      ></span>
+                      <span *ngIf="row.value.mandatory" class="text-danger"
+                        ><i class="far fa-check-circle"></i
+                      ></span>
+                    </td>
+                    <td class="co-s">
+                      {{
+                        valueFetcher(
+                          row.value.category,
+                          row.value.type,
+                          row.value.minValue,
+                          row.value.maxValue,
+                          row.value.stdValue
+                        )
+                      }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="!loadingItems" class="width2">
+              <table
+                class="table table-sm table-bordered align-middle custom-table"
+              >
+                <thead class="table-light">
+                  <tr>
+                    <th *ngFor="let col of sampleCols">{{ col }}</th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="DocumentLines">
+                  <tr
+                    *ngFor="let row of itemList.controls; let rowIndex = index"
+                    [formGroupName]="rowIndex"
+                  >
+                    <!-- Sample inputs -->
+                    <ng-container
+                      formArrayName="samplingData"
+                      *ngIf="getSamplingData(row) as sampleArray"
+                    >
+                      <td
+                        *ngFor="let col of sampleCols; let sampleIndex = index"
+                        [formGroupName]="sampleIndex"
+                      >
+                        <input
+                          *ngIf="row.value.type !== 'Boolean'"
+                          class="table-input-x"
+                          type="text"
+                          class="form-control"
+                          formControlName="observedValue"
+                          placeholder="Enter observed value"
+                        />
+
+                        <select
+                          *ngIf="row.value.type === 'Boolean'"
+                          formControlName="observedValue"
+                          class="form-select"
+                        >
+                          <option
+                            class="dropdown-placeholder"
+                            value="null"
+                            disabled
+                            selected
+                            hidden
+                          >
+                            Please select
+                          </option>
+                          <option
+                            *ngFor="let option of booleanDrops"
+                            [value]="option._id"
+                          >
+                            {{ option.name }}
+                          </option>
+                        </select>
+                      </td>
+                    </ng-container>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-        <div class="d-flex">
-          <div [ngClass]="loadingItems ? 'w-100' : 'width1'">
+
+          <div class="text-end mt-2">
+            <button class="btn btn-info" type="submit" [disabled]="isSaving">
+              <span *ngIf="!isSaving">Save</span>
+              <span *ngIf="isSaving"
+                >Saving&nbsp;<i
+                  class="bx bx-loader bx-spin align-middle ms-1 fs-4 text-white"
+                ></i
+              ></span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="selectedTab === 2">
+        <p class="mt-2 grey-txt align-g-txt">
+          Upload supporting documents related to this inspection, such as lab
+          reports, certificates of analysis, test sheets, or visual proof.
+          Ensure the documents are relevant, clearly labeled, and legible. These
+          attachments help validate the inspection process and ensure
+          traceability.
+        </p>
+
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h6 class="mb-0 text-primary">Uploaded Document List</h6>
+            <button class="upload-btn px-2 py-1" (click)="uploadDocument()">
+              <i class="fas fa-plus-circle"></i>&nbsp;Upload Document
+            </button>
+          </div>
+          <div class="document-table">
             <table
               class="table table-sm table-bordered align-middle custom-table"
             >
               <thead class="table-light">
                 <tr>
-                  <th>Parameter</th>
-                  <th>UOM</th>
-                  <th>Type</th>
-                  <th>Mandatory</th>
-                  <th>Condition (for 'X')</th>
+                  <th>Document Name</th>
+                  <th>Document Type</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
-              <tbody *ngIf="loadingItems">
+              <tbody *ngIf="loadingDocuments">
                 <tr>
-                  <td [colSpan]="5">
+                  <td [colSpan]="3">
                     <div class="my-5 py-5">
-                      <app-content-loader
-                        loadText="Loading QC Parameters"
-                      ></app-content-loader>
+                      <app-content-loader></app-content-loader>
                     </div>
                   </td>
                 </tr>
               </tbody>
-              <tbody *ngIf="!loadingItems && itemList.controls.length === 0">
+              <tbody *ngIf="!loadingDocuments && ducuments.length === 0">
                 <tr>
-                  <td [colSpan]="5">
+                  <td [colSpan]="3">
                     <app-no-data></app-no-data>
                   </td>
                 </tr>
               </tbody>
-              <tbody formArrayName="DocumentLines">
-                <tr
-                  *ngFor="let row of itemList.controls; let rowIndex = index"
-                  [formGroupName]="rowIndex"
-                >
-                  <td>{{ row.value.parameterName }}</td>
-                  <td>{{ row.value.uom }}</td>
-                  <td>{{ row.value.type }} - {{ row.value.category }}</td>
-                  <td>
-                    <span *ngIf="!row.value.mandatory" class="text-secondary"
-                      ><i class="far fa-times-circle"></i
-                    ></span>
-                    <span *ngIf="row.value.mandatory" class="text-danger"
-                      ><i class="far fa-check-circle"></i
-                    ></span>
-                  </td>
-                  <td class="co-s">
-                    {{
-                      valueFetcher(
-                        row.value.category,
-                        row.value.type,
-                        row.value.minValue,
-                        row.value.maxValue,
-                        row.value.stdValue
-                      )
-                    }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div *ngIf="!loadingItems" class="width2">
-            <table
-              class="table table-sm table-bordered align-middle custom-table"
-            >
-              <thead class="table-light">
-                <tr>
-                  <th *ngFor="let col of sampleCols">{{ col }}</th>
-                </tr>
-              </thead>
-              <tbody formArrayName="DocumentLines">
-                <tr
-                  *ngFor="let row of itemList.controls; let rowIndex = index"
-                  [formGroupName]="rowIndex"
-                >
-                  <!-- Sample inputs -->
-                  <ng-container
-                    formArrayName="samplingData"
-                    *ngIf="getSamplingData(row) as sampleArray"
-                  >
-                    <td
-                      *ngFor="let col of sampleCols; let sampleIndex = index"
-                      [formGroupName]="sampleIndex"
-                    >
-                      <input
-                        *ngIf="row.value.type !== 'Boolean'"
-                        class="table-input-x"
-                        type="text"
-                        class="form-control"
-                        formControlName="observedValue"
-                        placeholder="Enter observed value"
-                      />
-
-                      <select
-                        *ngIf="row.value.type === 'Boolean'"
-                        formControlName="observedValue"
-                        class="form-select"
-                      >
-                        <option
-                          class="dropdown-placeholder"
-                          value="null"
-                          disabled
-                          selected
-                          hidden
-                        >
-                          Please select
-                        </option>
-                        <option
-                          *ngFor="let option of booleanDrops"
-                          [value]="option._id"
-                        >
-                          {{ option.name }}
-                        </option>
-                      </select>
-                    </td>
-                  </ng-container>
+              <tbody *ngIf="!loadingDocuments && ducuments.length !== 0">
+                <tr *ngFor="let doc of ducuments">
+                  <td>{{ doc.name }}</td>
+                  <td>{{ doc.type }}</td>
+                  <!-- <td>{{}}</td> -->
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
-
-        <div class="text-end mt-2">
-          <button class="btn btn-info" type="submit" [disabled]="isSaving">
-            {{ isSaving ? "Saving..." : "Save" }}
-          </button>
-        </div>
-      </form>
+      </div>
 
       <div *ngIf="itemList.controls.length !== 0" class="mt-3 pt-3 sep-border">
         <div class="d-flex justify-content-between align-items-center">

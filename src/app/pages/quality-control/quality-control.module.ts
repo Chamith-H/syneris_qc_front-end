@@ -25,6 +25,7 @@ import { SampleGatherComponent } from "./inspections/inspection-conf/sample-gath
 import { GetActionComponent } from './inspections/inspection-conf/get-action/get-action.component';
 import { EditStageComponent } from './stages/edit-stage/edit-stage.component';
 import { ViewStageComponent } from './stages/view-stage/view-stage.component';
+import { DocUploadComponent } from './inspections/inspection-conf/doc-upload/doc-upload.component';
 
 const routes: Routes = [
   {
@@ -79,6 +80,7 @@ const routes: Routes = [
     GetActionComponent,
     EditStageComponent,
     ViewStageComponent,
+    DocUploadComponent,
   ],
   imports: [
     CommonModule,

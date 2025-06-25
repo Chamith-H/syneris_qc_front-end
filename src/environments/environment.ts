@@ -6,6 +6,7 @@ export const environment = {
   production: false,
   defaultauth: "fackbackend",
   apiUrl: "http://127.0.0.1:9503",
+  bucketUrl: "https://upload.gofile.io",
 };
 
 /*

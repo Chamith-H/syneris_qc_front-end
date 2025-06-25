@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import { SampleGatherComponent } from "./sample-gather/sample-gather.component";
 import { DateShower } from "src/app/core/services/shared/date-shower.service";
 import { GetActionComponent } from "./get-action/get-action.component";
+import { DocUploadComponent } from "./doc-upload/doc-upload.component";
 
 @Component({
   selector: "app-inspection-conf",
@@ -54,6 +55,15 @@ export class InspectionConfComponent {
 
   isSaving: boolean = false;
 
+  selectedTab: number = 1;
+
+  loadingDocuments: boolean = false;
+  ducuments: any[] = [];
+
+  changeTab(tab: number) {
+    this.selectedTab = tab;
+  }
+
   constructor(
     private inspectionService: InspectionService,
     private successMessage: SuccessMessage,
@@ -69,6 +79,22 @@ export class InspectionConfComponent {
 
     this.form3 = this.fb.group({
       DocumentLines: this.createitemList(),
+    });
+  }
+
+  uploadDocument() {
+    this.modalRef = this.modalService.show(DocUploadComponent, {
+      backdrop: "static",
+      class: "modal-md modal-dialog-centered",
+    });
+
+    this.modalRef.content.closePopup.subscribe(() => {
+      this.modalRef.hide();
+    });
+
+    this.modalRef.content.closePopupAndReload.subscribe(() => {
+      this.modalRef.hide();
+      this.closePopupAndReload.emit();
     });
   }
 
