@@ -63,7 +63,8 @@ export class WeighBridgeComponent {
     //!->>
     filters: {
       show: true,
-      buttonCol: "col-3 d-flex align-items-end justify-content-end",
+      buttonCol:
+        "col-xxl-3 col-lg-12 col-md-6 col-sm-6 d-flex align-items-end justify-content-end",
       options: [
         {
           type: FilterType.INPUT,
@@ -149,9 +150,20 @@ export class WeighBridgeComponent {
           type: EvalType.TEXT,
           value: ["aWeight"],
         },
+
         {
-          type: EvalType.TEXT,
+          type: EvalType.CUSTOM,
           value: ["status"],
+          options: [
+            {
+              optValue: "Open",
+              class: 1,
+            },
+            {
+              optValue: "Completed",
+              class: 2,
+            },
+          ],
         },
       ],
 

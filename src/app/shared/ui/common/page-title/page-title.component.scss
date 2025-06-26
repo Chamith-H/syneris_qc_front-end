@@ -44,3 +44,16 @@
   background-color: #ffffff5e;
   color: rgb(255, 255, 255);
 }
+
+@media print {
+  /* Hide elements you don't want in print */
+  .no-print {
+    display: none;
+  }
+
+  /* Remove overflow if needed */
+  .scrollable-content {
+    overflow: visible !important;
+    height: auto !important;
+  }
+}

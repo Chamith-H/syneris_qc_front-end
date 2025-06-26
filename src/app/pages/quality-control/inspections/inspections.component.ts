@@ -57,7 +57,7 @@ export class InspectionsComponent {
     //!->>
     filters: {
       show: true,
-      buttonCol: "col-12 d-flex align-items-end justify-content-end",
+      buttonCol: "col-xxl-12 col-lg-8 d-flex align-items-end justify-content-end",
       options: [
         {
           type: FilterType.DROPDOWN,

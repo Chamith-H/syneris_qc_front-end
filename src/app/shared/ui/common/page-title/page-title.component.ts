@@ -16,6 +16,10 @@ export class PageTitleComponent {
 
   constructor(private router: Router) {}
 
+  printWindow() {
+    window.print();
+  }
+
   headerAction() {
     if (this.content.button.action === OpenType.OPEN_NULL) {
       return;

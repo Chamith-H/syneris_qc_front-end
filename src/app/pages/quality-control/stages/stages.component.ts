@@ -141,7 +141,7 @@ export class StagesComponent {
     //!->>
     filters: {
       show: true,
-      buttonCol: "col-3 d-flex align-items-end justify-content-end",
+      buttonCol: "col-xxl-3 col-lg-12 col-md-6 col-sm-6 d-flex align-items-end justify-content-end",
       options: [
         {
           type: FilterType.INPUT,

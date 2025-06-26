@@ -171,7 +171,7 @@ export class RolesComponent {
     //!->>
     filters: {
       show: true,
-      buttonCol: "col-6 d-flex align-items-end justify-content-end",
+      buttonCol: "col-xxl-6 col-lg-4 d-flex align-items-end justify-content-end",
       options: [
         {
           type: FilterType.INPUT,
