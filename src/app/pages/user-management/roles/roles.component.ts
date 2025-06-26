@@ -211,10 +211,7 @@ export class RolesComponent {
           name: "Role Name",
           filter: false,
         },
-        {
-          name: "No of Users",
-          filter: false,
-        },
+
         {
           name: "No of Permissions",
           filter: false,
@@ -236,10 +233,7 @@ export class RolesComponent {
           type: EvalType.TEXT,
           value: ["name"],
         },
-        {
-          type: EvalType.TEXT,
-          value: ["userCount"],
-        },
+
         {
           type: EvalType.COUNT,
           value: ["permissions"],

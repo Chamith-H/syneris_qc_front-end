@@ -114,10 +114,6 @@ export class InspectionsComponent {
               name: "Rejected",
               _id: "Rejected",
             },
-            {
-              name: "Cancelled",
-              _id: "Cancelled",
-            },
           ],
         },
       ],

@@ -52,10 +52,12 @@
         </div>
 
         <div *ngIf="permissionForm.value.role === ''">
-          <app-no-data
-            imageUrl="permissionNoData.png "
-            message="Please select a user role to continue"
-          ></app-no-data>
+          <div class="img-box">
+            <img src="../../../../assets/images/whites/role.jpg" alt="" />
+            <p class="text-center grey-txt mt-2">
+              Please select a user role to continue!
+            </p>
+          </div>
         </div>
 
         <div *ngIf="permissionForm.value.role !== ''">

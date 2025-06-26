@@ -330,7 +330,7 @@ export class InspectionConfComponent {
         this.loadingItems = true;
 
         const body = {
-          stageName: "GRN",
+          stageName: this.stage,
           docNum: this.data.DocNum,
           itemCode: this.data.ItemCode,
           round: this.data.U_Round,

@@ -124,7 +124,7 @@ export class InspectionViewComponent {
     this.isStarting = true;
 
     const body = {
-      stageName: "GRN",
+      stageName: this.stage,
       docNum: this.data.DocNum,
       itemCode: this.data.ItemCode,
       line: this.data.Line,
@@ -245,7 +245,7 @@ export class InspectionViewComponent {
         this.loadingItems = true;
 
         const body = {
-          stageName: "GRN",
+          stageName: this.stage,
           docNum: this.data.DocNum,
           itemCode: this.data.ItemCode,
           round: this.data.U_Round,
@@ -389,7 +389,7 @@ export class InspectionViewComponent {
       this.loadingItems = true;
 
       const body = {
-        stageName: "GRN",
+        stageName: this.stage,
         docNum: this.data.DocNum,
         itemCode: this.data.ItemCode,
         round: this.data.U_Round,
